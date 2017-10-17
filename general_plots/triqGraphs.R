@@ -2,20 +2,39 @@ require(xlsx)
 require(ggplot2)
 require(gridExtra)
 require(grid)
+require(ggrepel)
 
 ##****CARGA DE FICHEROS*****************************************************************************************************
-dataset = "Elutriatrion"
-dataset_multiexperiment_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu_exp_level.xlsx", 2)
-msr3d_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu-msr3d-08/elu-msr3d-08_triq.xlsx", 2)
-lsl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu-lsl-03/elu-lsl-03_triq.xlsx", 2)
-msl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu-msl-02/elu-msl-02_triq.xlsx", 2)
+# dataset = "Elutriatrion"
+# dataset_multiexperiment_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu_exp_level.xlsx", 2)
+# msr3d_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu-msr3d-08/elu-msr3d-08_triq.xlsx", 2)
+# lsl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu-lsl-03/elu-lsl-03_triq.xlsx", 2)
+# msl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/elu/elu-msl-02/elu-msl-02_triq.xlsx", 2)
+
+# dataset = "gds4510"
+# dataset_multiexperiment_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4510/4510_exp_level.xlsx", 2)
+# msr3d_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4510/4510-msr3d-06/4510-msr3d-06_triq.xlsx", 2)
+# lsl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4510/4510-lsl-09/4510-lsl-09_triq.xlsx", 2)
+# msl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4510/4510-msl-07/4510-msl-07_triq.xlsx", 2)
+
+dataset = "gds4472"
+dataset_multiexperiment_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4472/4472_exp_level.xlsx", 2)
+msr3d_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4472/4472-msr3d-07/4472-msr3d-07_triq.xlsx", 2)
+lsl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4472/4472-lsl-02/4472-lsl-02_triq.xlsx", 2)
+msl_df <- read.xlsx("/Users/davgutavi/Desktop/soluciones_paper/4472/4472-msl-09/4472-msl-09_triq.xlsx", 2)
+
+
+
 
 ##****CONSTRUCCIÓN DE DATAFRAMES*********************************************************************************************
 
-##****Medias y desviación típica de todos los experimentos de casda dataset
+
+dataset_multiexperiment_df <- read.csv("/Users/davgutavi/NAS_DAVGUTAVI/biodata_mining/fuentes/biodatamining_revisions/paper_solutions/elu-sum.csv", sep = ";",header = T)
+
+##****Medias y desviación típica de todos los experimentos de cada dataset
 meanstdev_df <- dataset_multiexperiment_df[5:6]
 
-##****Eqtiquetas de solución y valores de TRIQ
+##****Etiquetas de solución y valores de TRIQ
 msr3d_triqdf <- msr3d_df[1:2]
 lsl_triqdf   <- lsl_df[1:2]
 msl_triqdf   <- msl_df[1:2]
@@ -69,12 +88,25 @@ all_combo_grqbioq_scatter <- grid.arrange(msr3d_grqbioq_scatter, lsl_grqbioq_sca
 ##****Gráfico scatter de MEAN vs STDEV
 
 ##****Leyendas de los puntos en una lista para el mathexpression
+# l2<-c(paste("MSR[3*D]"),"LSL","MSL")
+# meanstdev_scatter <- ggplot(data = meanstdev_df, aes(MEAN, STDEV)) + geom_jitter() + 
+#   geom_text(check_overlap = FALSE, size = 4, hjust = 0, vjust = 0,angle=90, nudge_x=0.01,parse = TRUE, aes(label =l2))+
+#   xlim(0.0, 1.0)+  ylim(0.0, 1.0)+ggtitle(dataset,subtitle = "Experiment Summary")
+
+
+
 l2<-c(paste("MSR[3*D]"),"LSL","MSL")
 meanstdev_scatter <- ggplot(data = meanstdev_df, aes(MEAN, STDEV)) + geom_jitter() + 
-  geom_text(check_overlap = FALSE, size = 4, hjust = 0, vjust = 0,angle=45, parse = TRUE, aes(label =l2))+
+  geom_text_repel(aes(label=l2),parse = TRUE)+
   xlim(0.0, 1.0)+  ylim(0.0, 1.0)+ggtitle(dataset,subtitle = "Experiment Summary")
 
+
+
+
 ##****PINTAR GRÁFICOS PARA EXPORTAR****************************************************************************************
+
+all_combo_peqspq_scatter
+all_combo_grqbioq_scatter
 print(meanstdev_scatter)
 
 print(msr3d_triq_barplot)

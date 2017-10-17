@@ -50,7 +50,7 @@ getDataset <- function(datasetname) {
   
 }
 
-getDatasetValues <- function(datasetList){
+getDatasetValues <- function(datasetInfo){
   
   valuePaths <- datasetInfo$"resources"
   rootPath <- paste0(getResourcesFolderPath(),"/",datasetInfo$.attr["id"])
