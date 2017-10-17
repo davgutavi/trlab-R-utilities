@@ -34,9 +34,29 @@ aux3 <-paste0(aux2,collapse="/")
 out1 <- paste0(aux3, "/graphs/")
 out2 <- paste0(aux3, "/tri_02")
 
-###############################################################################
+
+
+
+
+##################SOLUTION COMBO#############################################################
 paintSolutionsCombo(solutions,genesL,samplesL,timesL,out1)
+
+
+
+
 
 ###############################################################################
 source("GraphUtilities.R")
 paintSolutionPanels(solutions[[2]],genesL,samplesL,timesL,out2)
+
+
+
+
+
+
+
+
+
+
+
+
