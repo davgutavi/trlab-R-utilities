@@ -2,6 +2,8 @@ source("configuration.R")
 source("SolUtilities.R")
 require(lattice)
 
+
+
 ##***********************************************inputs
 input <- "/Users/davgutavi/Desktop/soluciones_paper/elu/elu_msl_02.sol"
 ##***********************************************inputs
