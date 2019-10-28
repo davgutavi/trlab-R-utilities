@@ -42,8 +42,6 @@ out2 <- paste0(aux3, "/tri_09")
 
 
 
-
-
 ##################SOLUTION COMBO#############################################################
 paintSolutionsCombo(solutions,genesL,samplesL,timesL,out1)
 
