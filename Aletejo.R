@@ -2,7 +2,7 @@
 source("utils/Configuration.R")
 source("utils/SolUtilities.R")
 require(ggplot2)
-  input <- "/home/david/TrLab/test/test.sol"
+input <- "/home/david/TrLab/test/test.sol"
 ##***Lectura del fichero .sol
 props <- read.properties(input)
 ##***Obtener información del dataset
@@ -27,28 +27,6 @@ for (tri in solutions){
           strip.background = element_rect(fill=NA, color="black"))
    print(gr)
 }
-
-
-tri <- solutions[[1]]
-tri$p <- paste0("(",tri$s,",",tri$g,")")
-
-
-ggplot(tri, aes(x=t,y=el,color=p))+
-  geom_line()
-ggplot(tri, aes(x = t,y = el,group=g)) +
-  geom_line() +
-  facet_grid(s~.,labeller = label_both)
-
-  # theme_minimal() + 
-  # theme(panel.border = element_rect(color="black", fill=NA), 
-  #       strip.background = element_rect(fill=NA, color="black"),
-  #       axis.title = element_text(size = 5, face = "bold"),
-  #       axis.text = element_text(size = 4),
-  #       strip.text = element_text(size = 5),
-  #       axis.text.x = element_text(angle = 90, hjust = 0.5)
-
-
-
 
 # Construir dataset de puntos para clustering (k-means) a partir de la imágenes  ---- 
 folder<-"/home/cluster/Escritorio/Milho"
