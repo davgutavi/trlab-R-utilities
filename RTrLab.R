@@ -1,15 +1,10 @@
-source("configuration.R")
-source("SolUtilities.R")
-source("GraphUtilities.R")
+source("utils/Configuration.R")
+source("utils/SolUtilities.R")
+source("utils/GraphUtilities.R")
 
 ##***********************************************inputs
-#input <- "/Users/davgutavi/Desktop/soluciones_paper/elu/elu_msl_02.sol"
 
-#input <- "/Users/davgutavi/Desktop/soluciones_paper/4510/4510_msl_07.sol"
-
-#input <- "/Users/davgutavi/Desktop/soluciones_paper/4472/4472_msl_09.sol"
-#input <- "/Users/davgutavi/Desktop/soluciones_paper/4472/4472_lsl_02.sol"
-input <- "/Users/davgutavi/Desktop/soluciones_paper/4472/4472_msr3d_07.sol"
+input <- "/home/david/TrLab/test/test.sol"
 ##***********************************************inputs
 
 ##***Lectura del fichero .sol
@@ -40,10 +35,10 @@ aux3 <-paste0(aux2,collapse="/")
 out1 <- paste0(aux3, "/graphs/")
 out2 <- paste0(aux3, "/tri_09")
 
-
-
 ##################SOLUTION COMBO#############################################################
 paintSolutionsCombo(solutions,genesL,samplesL,timesL,out1)
+
+
 
 
 
