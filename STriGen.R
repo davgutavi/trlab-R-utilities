@@ -1,4 +1,4 @@
-source("strigen_utils.R")
+source("utils/StriGenUtils.R")
 
 rootFolder         <- "/Users/davgutavi/Desktop/strigen_ijcis_plots"
 syntheticFolder    <- paste0(rootFolder,"/synthetic")
