@@ -1,4 +1,7 @@
 require(lattice)
+require(ggplot2)
+source("utils/Configuration.R")
+source("utils/SolUtilities.R")
 
 paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath,
                           w=20,h=10,fsizeXaxis=0.7,fsizeYaxis=0.7,fsizeBoxes=1.0,lib=FALSE,color=TRUE){
@@ -106,6 +109,42 @@ paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath
 }
 
 # ----
+
+
+buildTimeSeriesPlots<-function(inputSolPath){
+  ##***Lectura del fichero .sol
+  props <- read.properties(inputSolPath)
+  ##***Obtener información del dataset
+  datasetInfo <- getDataset(props$dataset)
+  #****Obtener los paths de las listas de genes, condiciones y tiempos
+  paths <- getGSTtags(datasetInfo)
+  #****Obtener las etiquetas de genes, condiciones y tiempos en forma de vector
+  genesL <- as.vector(read.table(paths["genes"],sep = "\n")$V1)
+  samplesL <- as.vector(read.table(paths["samples"],sep = "\n")$V1)
+  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
+  #****Obtener valores del dataset
+  dataset <- getDatasetValues(datasetInfo)
+  #****Obtener los puntos [gen,condición,tiempo,expresión génica] de cada solución
+  solutions <-getTriclusters(props,dataset)
+  
+  res <- list()
+  i <- 1
+  for (tri in solutions){
+    tri$p <- paste0("(",tri$s,",",tri$g,")")
+    gr<-ggplot(tri, aes(x=t,y=el,color=p))+
+      geom_line()+ 
+      theme_minimal() + 
+      theme(legend.position = "none",
+            panel.border = element_rect(color="black", fill=NA), 
+            strip.background = element_rect(fill=NA, color="black"))
+    res[[i]]<-gr
+    i<-i+1
+  }
+  
+  return (res)
+  
+  
+}
 
 
 
