@@ -7,16 +7,33 @@ soco4gr <- buildTimeSeriesPlots("/home/david/soco04/soco04.sol","NDVI")
 
 
 
+soco5gr <- buildTimeSeriesPlots("/home/david/soco05/soco05.sol","NDVI")
+soco6gr <- buildTimeSeriesPlots("/home/david/soco06/soco06.sol","NDVI")
+soco7gr <- buildTimeSeriesPlots("/home/david/soco07/soco07.sol","NDVI")
 
 i<-1
-for (g in soco4gr) {
+for (g in soco5gr) {
   print(g)
-  ggsave(paste0("soco4_",i),g,path="/home/david/Escritorio/PrecissionAgriculture/Plots",
+  ggsave(paste0("soco5_",i),g,path="/home/david/Escritorio/PrecissionAgriculture/Plots",
          device = "eps",width = 8, height = 5)
   i<-i+1
 }
 
-
+i<-1
+for (g in soco6gr) {
+  print(g)
+  ggsave(paste0("soco6_",i),g,path="/home/david/Escritorio/PrecissionAgriculture/Plots",
+         device = "eps",width = 8, height = 5)
+  i<-i+1
+}
+  
+i<-1
+for (g in soco7gr) {
+  print(g)
+  ggsave(paste0("soco7_",i),g,path="/home/david/Escritorio/PrecissionAgriculture/Plots",
+         device = "eps",width = 8, height = 5)
+  i<-i+1
+}
 
 
 
