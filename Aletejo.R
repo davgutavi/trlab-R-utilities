@@ -2,7 +2,37 @@
 source("utils/GraphUtilities.R")
 
 
-soco1gr <- buildTimeSeriesPlots("/home/david/soco01/soco01.sol")
+
+soco4gr <- buildTimeSeriesPlots("/home/david/soco04/soco04.sol","NDVI")
+
+
+
+
+i<-1
+for (g in soco4gr) {
+  print(g)
+  ggsave(paste0("soco4_",i),g,path="/home/david/Escritorio/PrecissionAgriculture/Plots",
+         device = "eps",width = 8, height = 5)
+  i<-i+1
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

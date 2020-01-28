@@ -111,7 +111,8 @@ paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath
 # ----
 
 
-buildTimeSeriesPlots<-function(inputSolPath){
+buildTimeSeriesPlots<-function(inputSolPath,yl=""){
+  
   ##***Lectura del fichero .sol
   props <- read.properties(inputSolPath)
   ##***Obtener información del dataset
@@ -129,12 +130,19 @@ buildTimeSeriesPlots<-function(inputSolPath){
   
   res <- list()
   i <- 1
+  
+  
   for (tri in solutions){
     tri$p <- paste0("(",tri$s,",",tri$g,")")
-    gr<-ggplot(tri, aes(x=t,y=el,color=p))+
-      geom_line()+ 
+    bre <-as.numeric(levels(factor(tri$t)))
+    lab <- timesL[bre+1]
+    gr<-ggplot(tri, aes(x=t,y=el))+
+      geom_line(aes(color=p))+ 
+      scale_x_continuous(breaks=bre, labels = lab)+
+      ylab(yl)+
       theme_minimal() + 
       theme(legend.position = "none",
+            axis.text.x = element_text(angle = 90, hjust = 1),
             panel.border = element_rect(color="black", fill=NA), 
             strip.background = element_rect(fill=NA, color="black"))
     res[[i]]<-gr
@@ -142,8 +150,6 @@ buildTimeSeriesPlots<-function(inputSolPath){
   }
   
   return (res)
-  
-  
 }
 
 
