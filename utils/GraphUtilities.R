@@ -133,6 +133,8 @@ buildTimeSeriesPlots<-function(inputSolPath,yl=""){
   
   
   for (tri in solutions){
+    
+    print(paste0("Plotting soluion ",i,". Time points = ",toString(levels(factor(tri$t)))))
     tri$p <- paste0("(",tri$s,",",tri$g,")")
     bre <-as.numeric(levels(factor(tri$t)))
     lab <- timesL[bre+1]
@@ -153,8 +155,22 @@ buildTimeSeriesPlots<-function(inputSolPath,yl=""){
 }
 
 
+printPlotList <- function(pl){
+  for (g in pl) {
+    print(g)
+  }
+}
 
-
+savePlotList <- function(pl,fileName,rootPath,d="eps",w=8,h=5,print=F){
+  i<-1
+  for (g in pl) {
+    if (print==T){
+      print(g)
+    }
+    ggsave(paste0(fileName,"_",i),g,path=rootPath,device=dv,width=w,height=h)
+    i<-i+1
+  }
+}
 
 
 
