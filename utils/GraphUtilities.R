@@ -172,6 +172,61 @@ savePlotList <- function(pl,fileName,rootPath,d="eps",w=8,h=5,print=F){
   }
 }
 
+# Función de Laura para el SOCO ----
+buildTimeSeriesPlotsNormalized<-function(inputSolPath, yl="", xl=""){
+  ##***Lectura del fichero .sol
+  props <- read.properties(inputSolPath)
+  ##***Obtener informaciÃ³n del dataset
+  datasetInfo <- getDataset(props$dataset)
+  #****Obtener los paths de las listas de genes, condiciones y tiempos
+  paths <- getGSTtags(datasetInfo)
+  #****Obtener las etiquetas de genes, condiciones y tiempos en forma de vector
+  genesL <- as.vector(read.table(paths["genes"],sep = "\n")$V1)
+  samplesL <- as.vector(read.table(paths["samples"],sep = "\n")$V1)
+  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
+  #****Obtener valores del dataset
+  dataset <- getDatasetValues(datasetInfo)
+  #****Obtener los puntos [gen,condiciÃ³n,tiempo,expresiÃ³n gÃ©nica] de cada soluciÃ³n
+  solutions <-getTriclusters(props,dataset)
+  
+  res <- list()
+  i <- 1
+  for (tri in solutions){
+    tri$p <- paste0("(",tri$s,",",tri$g,")")
+    
+    mind<-as.numeric(min(tri$el))
+    maxd<-as.numeric(max(tri$el))
+    
+    oldRange = maxd-mind
+    newMin = -1 # Valor mínimo nuevo rango
+    newMax = 1 # Valor máximo nuevo rango
+    newRange = newMax - newMin
+    
+    bre <-as.numeric(levels(factor(tri$t)))
+    lab <- timesL[bre+1]
+    
+    tri$norm <- (((tri$el-mind)*(newRange))/oldRange)+newMin # Formula cambiar rango eje y
+    
+    gr<-ggplot(tri, aes(x=t,y=norm,color=p))+
+      geom_line()+ 
+      scale_x_continuous(breaks=bre, labels = lab)+
+      ylab(yl)+
+      xlab(xl)+
+      theme_minimal() + 
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 90, hjust = 1),
+            panel.border = element_rect(color="black", fill=NA), 
+            strip.background = element_rect(fill=NA, color="black")) +
+      stat_summary(fun.y=mean, geom="line", colour="black", linetype=2, size=1.5) 
+    
+    
+    
+    res[[i]]<-gr
+    i<-i+1
+  }
+  
+  return (res)
+}
 
 
 
