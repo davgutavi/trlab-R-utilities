@@ -1,7 +1,32 @@
 require(lattice)
 require(ggplot2)
-source("utils/Configuration.R")
-source("utils/SolUtilities.R")
+
+# Patrones ----
+
+plotPatterns <- function(solPath){
+  
+  experiment <- loadExperiment(solPath)
+  solutions <- experiment$solutions
+  datasetInfo <- experiment$dataset_info
+  
+  #****Obtener los paths de las listas de genes, condiciones y tiempos
+  paths <- getGSTtags(datasetInfo)
+  
+  #****Obtener los genes, condiciones y tiempos en forma de vector
+  genesL <- as.vector(read.table(paths["genes"],sep = "\n")$V1)
+  samplesL <- as.vector(read.table(paths["samples"],sep = "\n")$V1)
+  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
+  
+  #****Output path
+  aux1 <- paste0(unlist(strsplit(input, "/")))
+  aux2 <- aux1[-length(aux1)]
+  aux3 <-paste0(aux2,collapse="/")
+  out1 <- paste0(aux3, "/graphs/")
+  
+  paintSolutionsCombo(solutions,genesL,samplesL,timesL,out1)
+  
+}
+
 
 paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath,
                           w=20,h=10,fsizeXaxis=0.7,fsizeYaxis=0.7,fsizeBoxes=1.0,lib=FALSE,color=TRUE){
@@ -38,17 +63,19 @@ paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath
     
     genes <- c()
     for (gi in levels(fg)){
-      genes<-append(genes, as.character(genesL[as.numeric(gi)+1]))
-    }
-    conditions <- c()
-    for (si in levels(fs)){
-      conditions<-append(conditions, as.character(samplesL[as.numeric(si)+1]))
-    }
-    times <- c()
-    for (ti in levels(ft)){
-      times<-append(times, as.character(timesL[as.numeric(ti)+1]))
+      genes<-append(genes, as.character(genesList[as.numeric(gi)+1]))
     }
     
+    conditions <- c()
+    for (si in levels(fs)){
+      conditions<-append(conditions, as.character(samplesList[as.numeric(si)+1]))
+    }
+
+    times <- c()
+    for (ti in levels(ft)){
+      times<-append(times, as.character(timesList[as.numeric(ti)+1]))
+    }
+
     out <- paste0(outPath,"graph_tri_",i,".eps")
     
     trellis.device(device="postscript", color)
@@ -108,25 +135,10 @@ paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath
 
 }
 
-# ----
-
-
 buildTimeSeriesPlots<-function(inputSolPath,yl=""){
   
-  ##***Lectura del fichero .sol
-  props <- read.properties(inputSolPath)
-  ##***Obtener información del dataset
-  datasetInfo <- getDataset(props$dataset)
-  #****Obtener los paths de las listas de genes, condiciones y tiempos
-  paths <- getGSTtags(datasetInfo)
-  #****Obtener las etiquetas de genes, condiciones y tiempos en forma de vector
-  genesL <- as.vector(read.table(paths["genes"],sep = "\n")$V1)
-  samplesL <- as.vector(read.table(paths["samples"],sep = "\n")$V1)
-  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
-  #****Obtener valores del dataset
-  dataset <- getDatasetValues(datasetInfo)
-  #****Obtener los puntos [gen,condición,tiempo,expresión génica] de cada solución
-  solutions <-getTriclusters(props,dataset)
+  experiment <-loadExperiment(path)
+  solutions <- experiment$solutions
   
   res <- list()
   i <- 1
@@ -172,22 +184,11 @@ savePlotList <- function(pl,fileName,rootPath,d="eps",w=8,h=5,print=F){
   }
 }
 
-# Función de Laura para el SOCO ----
+# Análisis espeacio-temporal ----
 buildTimeSeriesPlotsNormalized<-function(inputSolPath, yl="", xl=""){
-  ##***Lectura del fichero .sol
-  props <- read.properties(inputSolPath)
-  ##***Obtener informaciÃ³n del dataset
-  datasetInfo <- getDataset(props$dataset)
-  #****Obtener los paths de las listas de genes, condiciones y tiempos
-  paths <- getGSTtags(datasetInfo)
-  #****Obtener las etiquetas de genes, condiciones y tiempos en forma de vector
-  genesL <- as.vector(read.table(paths["genes"],sep = "\n")$V1)
-  samplesL <- as.vector(read.table(paths["samples"],sep = "\n")$V1)
-  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
-  #****Obtener valores del dataset
-  dataset <- getDatasetValues(datasetInfo)
-  #****Obtener los puntos [gen,condiciÃ³n,tiempo,expresiÃ³n gÃ©nica] de cada soluciÃ³n
-  solutions <-getTriclusters(props,dataset)
+
+  experiment <-loadExperiment(path)
+  solutions <- experiment$solutions
   
   res <- list()
   i <- 1
@@ -228,6 +229,51 @@ buildTimeSeriesPlotsNormalized<-function(inputSolPath, yl="", xl=""){
   return (res)
 }
 
+# Mapas de calor ----
+buildMap<-function(path,Xsize,Ysize){
+ 
+  experiment <-loadExperiment(path)
+  solutions <- experiment$solutions
+  
+  general <- data.frame(x=0,y=seq(0,Ysize-1),v=0)
+  for (i in c(1:(Xsize-1))){
+    general<-rbind(general,data.frame(x=i,y=seq(0,Ysize-1),v=0))
+  }
+  
+  clusters<-list()
+  clusters[[1]] <- cbind(unique(data.frame(x=solutions[[1]]$s,y=solutions[[1]]$g)),v=1)
+  
+  for(i in c(1:length(solutions))){
+    clusters[[i]] <-cbind(unique(data.frame(x=solutions[[i]]$s,y=solutions[[i]]$g)),v=i)
+  }
+  
+  for(j in c(1:length(clusters))){
+    clus <- clusters[[j]]
+    for (i in c(1:nrow(clus))){
+      cv <- general[which(general$x==clus[i,]$x&general$y==clus[i,]$y),3]
+      if (length(cv)>0){
+        if (cv!=0){
+          general[which(general$x==clus[i,]$x&general$y==clus[i,]$y),3]=-1
+        }
+        else{
+          general[which(general$x==clus[i,]$x&general$y==clus[i,]$y),3]=clus[i,]$v
+        }
+      }
+    }
+  }
+  
+  general$x<- as.character(general$x)
+  general$y<- as.character(general$y)
+  general$v<- as.character(general$v)
+  
+  gr<-ggplot(general, aes(x = x, y = y, fill=v, colour=v)) + 
+    geom_tile() + 
+    scale_x_discrete(limits = unique(general$x))+
+    scale_y_discrete(limits = unique(general$y))+
+    labs(x="X", y="Y", title="Map") 
+  
+  return(gr)
+}
 
 
 
