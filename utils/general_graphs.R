@@ -1,5 +1,7 @@
 require(lattice)
 require(ggplot2)
+require(gridExtra)
+require(grid)
 
 # Patrones ----
 
@@ -274,6 +276,87 @@ buildMap<-function(path,Xsize,Ysize){
   
   return(gr)
 }
+
+cluster_maps <- function(solPath,Xsize,Ysize,title){
+  
+  experiment <-loadExperiment(solPath)
+  solutions <- experiment$solutions
+  
+  explored <- data.frame(x=0,y=seq(0,Ysize-1),v=0)
+  
+  for (j in c(1:(Xsize-1))){
+    explored<-rbind(explored,data.frame(x=j,y=seq(0,Ysize-1),v=0))
+  }
+  
+  grs <- list()
+  i <- 1
+  for (solution in solutions){
+    
+    print(paste0("Plotting map #",i,"/",length(solutions)))
+    
+    gdata <- data.frame(x=0,y=seq(0,Ysize-1),v=0)
+    
+    for (j in c(1:(Xsize-1))){
+      gdata<-rbind(gdata,data.frame(x=j,y=seq(0,Ysize-1),v=0))
+    }
+    
+    cluster <- cbind(unique(data.frame(x=solution$s,y=solution$g)),v=i)
+    
+    for (j in c(1:nrow(cluster))){
+      gdata[which(gdata$x==cluster[j,]$x&gdata$y==cluster[j,]$y),3]=cluster[j,]$v
+      explored[which(explored$x==cluster[j,]$x&explored$y==cluster[j,]$y),3]=1
+    }
+    
+    gdata$x<- as.character(gdata$x)
+    gdata$y<- as.character(gdata$y)
+    gdata$v<- as.character(gdata$v)
+    
+    gr <- ggplot(gdata, aes(x = x, y = y, fill=v, colour=v)) + 
+      geom_tile() + 
+      scale_fill_manual(values = c("white","black"))+
+      scale_color_manual(values = c("black","white"))+
+      scale_x_discrete(limits = unique(gdata$x))+
+      scale_y_discrete(limits = unique(gdata$y))+
+      labs(x="X", y="Y", title=paste0("Cluster ",i))+
+      theme(legend.position = "none")
+    
+    grs[[i]]<-gr
+    
+    i <- i+1
+  }
+  
+  if(length(levels(factor(explored$v)))==2){
+    clr1 <- c("white","black")
+    clr2 <- c("black","white")
+  }else{
+    if(levels(factor(explored$v))==1){
+      clr1 <- c("black","white")
+      clr2 <- c("white","black")
+    }
+  }
+  
+  explored$x<- as.character(explored$x)
+  explored$y<- as.character(explored$y)
+  explored$v<- as.character(explored$v)
+  
+  ugr <- ggplot(explored, aes(x = x, y = y, fill=v, colour=v)) + 
+    geom_tile() + 
+    scale_fill_manual(values = clr1)+
+    scale_color_manual(values = clr2)+
+    scale_x_discrete(limits = unique(explored$x))+
+    scale_y_discrete(limits = unique(explored$y))+
+    labs(x="X", y="Y", title=paste0("Explored"))+
+    theme(legend.position = "none") 
+  
+  
+  grs[[length(grs)+1]]=ugr
+ 
+  clusterMaps <- do.call(arrangeGrob,c(grs,ncol=floor(sqrt(length(grs))),top=title))
+  
+  return(clusterMaps)
+  
+}
+
 
 
 
