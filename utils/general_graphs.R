@@ -2,6 +2,7 @@ require(lattice)
 require(ggplot2)
 require(gridExtra)
 require(grid)
+require(stringr)
 
 # Patrones ----
 
@@ -20,7 +21,7 @@ plotPatterns <- function(solPath){
   timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
   
   #****Output path
-  aux1 <- paste0(unlist(strsplit(input, "/")))
+  aux1 <- paste0(unlist(strsplit(solPath, "/")))
   aux2 <- aux1[-length(aux1)]
   aux3 <-paste0(aux2,collapse="/")
   out1 <- paste0(aux3, "/graphs/")
@@ -137,10 +138,54 @@ paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath
 
 }
 
+buildCellPatternPlots <-function(inputSolPath, xl="Features", yl="Occurrences"){
+  
+  experiment <-loadExperiment(inputSolPath)
+  solutions <- experiment$solutions
+  datasetInfo <- experiment$dataset_info
+  paths <- getGSTtags(datasetInfo)
+  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
+  
+  
+  res <- list()
+  i <- 1
+  
+  
+  for (tri in solutions){
+    
+    tri$p <- paste0("(",tri$s,",",tri$g,")")
+    tri$fl <- timesL[tri$t+1]
+    
+    print(paste0("Plotting solution ",i,". Features = ",toString(levels(factor(tri$fl)))))
+   
+     gr<-ggplot(tri, aes(x=fl,y=el,group=p,color=p))+
+      geom_line()+
+      ylab(yl)+
+      xlab(xl)+
+      theme_minimal() + 
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 90, hjust = 1),
+            panel.border = element_rect(color="black", fill=NA), 
+            strip.background = element_rect(fill=NA, color="black"))
+    
+      res[[i]]<-gr
+    i<-i+1
+  }
+  
+  return (res)
+} 
+
+
+
+
 buildTimeSeriesPlots<-function(inputSolPath,yl=""){
   
-  experiment <-loadExperiment(path)
+  experiment <-loadExperiment(inputSolPath)
   solutions <- experiment$solutions
+  datasetInfo <- experiment$dataset_info
+  paths <- getGSTtags(datasetInfo)
+  timesL <- as.vector(read.table(paths["times"],sep = "\n")$V1)
+  
   
   res <- list()
   i <- 1
@@ -311,10 +356,20 @@ cluster_maps <- function(solPath,Xsize,Ysize,title){
     gdata$y<- as.character(gdata$y)
     gdata$v<- as.character(gdata$v)
     
+    if(length(levels(factor(gdata$v)))==2){
+      clr1 <- c("white","black")
+      clr2 <- c("black","white")
+    }else{
+      if(levels(factor(gdata$v))>1){
+        clr1 <- c("black","white")
+        clr2 <- c("white","black")
+      }
+    }
+    
     gr <- ggplot(gdata, aes(x = x, y = y, fill=v, colour=v)) + 
       geom_tile() + 
-      scale_fill_manual(values = c("white","black"))+
-      scale_color_manual(values = c("black","white"))+
+      scale_fill_manual(values = clr1)+
+      scale_color_manual(values = clr2)+
       scale_x_discrete(limits = unique(gdata$x))+
       scale_y_discrete(limits = unique(gdata$y))+
       labs(x="X", y="Y", title=paste0("Cluster ",i))+
@@ -358,6 +413,130 @@ cluster_maps <- function(solPath,Xsize,Ysize,title){
 }
 
 
+cluster_maps_total <- function(solPath,totPath,Xsize,Ysize,title){
+  
+  totals <- read.csv(totPath,sep=";",header=F)
+  
+  experiment <-loadExperiment(solPath)
+  solutions <- experiment$solutions
+  
+  explored <- data.frame(x=0,y=seq(0,Ysize-1),level="0")
+  
+  for (j in c(1:(Xsize-1))){
+    explored<-rbind(explored,data.frame(x=j,y=seq(0,Ysize-1),level="0"))
+  }
+  
+  grs <- list()
+  i <- 1
+  for (solution in solutions){
+    
+    print(paste0("Plotting map #",i,"/",length(solutions)))
+    
+    gdata <- data.frame(x=0,y=seq(0,Ysize-1),value=-1,level =-1)
+    
+    for (j in c(1:(Xsize-1))){
+      gdata<-rbind(gdata,data.frame(x=j,y=seq(0,Ysize-1),value=-1,level =-1))
+    }
+    
+    cluster <- cbind(unique(data.frame(x=solution$s,y=solution$g)))
+    
+    for (j in c(1:nrow(cluster))){
+      
+      explored[which(explored$x==cluster[j,]$x&explored$y==cluster[j,]$y),3]="1"
+      
+      tv <- totals[cluster[j,]$y+1,cluster[j,]$x+1]
+      
+      if(tv==0){
+        l = "0"
+      }
+      else if(tv>0&&tv<=25){
+        l = "1"
+      }
+      else if(tv>25&&tv<=50){
+        l = "2"
+      }
+      else if(tv>=50){
+        l = "3"
+      }
+      gdata[which(gdata$x==cluster[j,]$x&gdata$y==cluster[j,]$y),3]=tv
+      gdata[which(gdata$x==cluster[j,]$x&gdata$y==cluster[j,]$y),4]=l
+    }
+    
+    gdata$x<- as.character(gdata$x)
+    gdata$y<- as.character(gdata$y)
+    
+    gr<-ggplot(gdata, aes(x, y)) +
+      geom_tile(aes(fill = level), colour = "black")+
+      scale_fill_manual(values=c("-1"="white","0"="black","1"="green","2"="blue","3"="red"),
+                        labels=c("-1"="No selected","0"="0","1"="(0,25]","2"="(25,50]","3"=">50"))+
+      scale_x_discrete(limits = unique(gdata$x),position = "top")+
+      scale_y_discrete(limits = rev(unique(gdata$y)))+
+      labs(x="X", y="Y", title=paste0("Cluster ",i))+
+      theme(legend.title = element_blank())
+    
+    
+    grs[[i]]<-gr
+    
+    i <- i+1
+  }
+  
+  explored$x<- as.character(explored$x)
+  explored$y<- as.character(explored$y)
+  
+  ugr <- ggplot(explored, aes(x, y)) +
+    geom_tile(aes(fill = level), colour = "black")+
+    scale_fill_manual(values=c("0"="white","1"="black"),
+                      labels=c("0"="No selected","1"="Selected"))+
+    scale_x_discrete(limits = unique(explored$x),position = "top")+
+    scale_y_discrete(limits = rev(unique(explored$y)))+
+    labs(x="X", y="Y", title="Explored")+
+    theme(legend.title = element_blank())
+  
+  grs[[length(grs)+1]]<-ugr
+  
+  occurrences <- cluster_occurrences_aux(solutions,totals)
+  grs[[length(grs)+1]]<-occurrences
+  
+  clusterMaps <- do.call(arrangeGrob,c(grs,ncol=floor(sqrt(length(grs))),top=title))
+  
+  return(clusterMaps)
+  
+}
+
+cluster_occurrences<-function(solPath,totPath){
+  totals <- read.csv(totPath,sep=";",header=F)
+  experiment <-loadExperiment(solPath)
+  solutions <- experiment$solutions
+  gr <- cluster_occurrences_aux(solutions,totals)
+  return(gr)
+}
+
+cluster_occurrences_aux<-function(solutions,totals){
+  id <- 1
+  summation <- data.frame(id=character(), sum=numeric())
+  padn <- 2
+  if (length(solutions)>=100){
+    padn <- 3
+  }
+  for (solution in solutions){
+    coordinates <- unique(data.frame(x=solution$s,y=solution$g))
+    sum <- 0
+    for (i in c(1:nrow(coordinates))){
+      sum <- sum + totals[coordinates[i,2]+1,coordinates[i,1]+1]
+    }
+    
+    summation <- rbind(summation,data.frame(id=paste0("#",str_pad(id,padn,"left",pad="0")), sum=sum))
+    id <- id +1
+  }
+  
+  gr <- ggplot(summation,aes(x=id, y=sum))+
+    geom_col()+
+    xlab("Cluster")+
+    ylab("Total occurrences")+
+    geom_text(aes(label=sum), vjust=-0.3, size=3.5)
+  
+  return(gr)
+}
 
 
 
