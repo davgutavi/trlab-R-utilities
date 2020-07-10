@@ -1,11 +1,54 @@
+solPath <-"/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/andorra29/t04_p02/t04_p02.sol"
+outputFolder <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/coordenadas"
+experiment <-loadExperiment(solPath)
+solutions <- experiment$solutions
+dir.create(outputFolder,showWarnings = FALSE)
+rootFileName<-paste0(outputFolder,"/",strsplit(tail(strsplit(solPath,"/")[[1]],1),".sol")[[1]][1])
+
+
+padn <- 2
+if (length(solutions)>=100){
+    padn <- 3
+}
+id <- 1
+for (solution in solutions){
+  write.table(unique(data.frame(x=solution$s,y=solution$g)),
+              sep=";",
+              file = paste0(rootFileName,"_",str_pad(id,padn,"left",pad="0"),".csv"),
+              row.names = F,
+              quote = F
+  )
+    id <- id +1
+}
+
+
+
 # Cluster totals ----
 require(stringr)
 solPath <-"/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/andorra29/t04_p02/t04_p02.sol"
 totPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/dataset/totales_29.csv"
-
+outputFolder <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas"
 totals <- read.csv(totPath,sep=";",header=F)
 experiment <-loadExperiment(solPath)
 solutions <- experiment$solutions
+
+id <- 1
+dfl <- list()
+for (solution in solutions){
+coordinates <- unique(data.frame(x=solution$s,y=solution$g))
+sum <- 0
+for (i in c(1:nrow(coordinates))){
+  sum <- sum + totals[coordinates[i,2]+1,coordinates[i,1]+1]
+}
+df <- data.frame(x=coordinates$x,y=coordinates$y,o=sum)
+dfl[[id]]<-df
+id <- id +1
+}
+
+
+
+
+
 
 id <- 1
 summation <- data.frame(id=character(), sum=numeric())
@@ -13,6 +56,9 @@ padn <- 2
 if (length(solutions)>=100){
   padn <- 3
 }
+
+tflist <- list()
+
 for (solution in solutions){
   coordinates <- unique(data.frame(x=solution$s,y=solution$g))
   sum <- 0
@@ -20,6 +66,8 @@ for (solution in solutions){
     sum <- sum + totals[coordinates[i,2]+1,coordinates[i,1]+1]
   }
   
+
+    
   summation <- rbind(summation,data.frame(id=paste0("#",str_pad(id,padn,"left",pad="0")), sum=sum))
   id <- id +1
 }

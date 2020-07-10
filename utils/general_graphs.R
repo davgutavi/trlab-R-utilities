@@ -413,7 +413,7 @@ cluster_maps <- function(solPath,Xsize,Ysize,title){
 }
 
 
-cluster_maps_total <- function(solPath,totPath,Xsize,Ysize,title){
+cluster_total_plot_list <- function(solPath,totPath,Xsize,Ysize,title){
   
   totals <- read.csv(totPath,sep=";",header=F)
   
@@ -462,6 +462,9 @@ cluster_maps_total <- function(solPath,totPath,Xsize,Ysize,title){
       gdata[which(gdata$x==cluster[j,]$x&gdata$y==cluster[j,]$y),4]=l
     }
     
+    sum <- cluster_ocurrences_value(solution,totals)
+    grtitle <- paste0("Cluster #",i," Total occurrences = ",sum)
+    
     gdata$x<- as.character(gdata$x)
     gdata$y<- as.character(gdata$y)
     
@@ -471,7 +474,7 @@ cluster_maps_total <- function(solPath,totPath,Xsize,Ysize,title){
                         labels=c("-1"="No selected","0"="0","1"="(0,25]","2"="(25,50]","3"=">50"))+
       scale_x_discrete(limits = unique(gdata$x),position = "top")+
       scale_y_discrete(limits = rev(unique(gdata$y)))+
-      labs(x="X", y="Y", title=paste0("Cluster ",i))+
+      labs(x="X", y="Y", title=grtitle) +
       theme(legend.title = element_blank())
     
     
@@ -494,24 +497,32 @@ cluster_maps_total <- function(solPath,totPath,Xsize,Ysize,title){
   
   grs[[length(grs)+1]]<-ugr
   
-  occurrences <- cluster_occurrences_aux(solutions,totals)
+  occurrences <- cluster_occurrences_plot_aux(solutions,totals)
   grs[[length(grs)+1]]<-occurrences
   
-  clusterMaps <- do.call(arrangeGrob,c(grs,ncol=floor(sqrt(length(grs))),top=title))
-  
-  return(clusterMaps)
+  return(grs)
   
 }
 
-cluster_occurrences<-function(solPath,totPath){
+cluster_occurrences_plot<-function(solPath,totPath){
   totals <- read.csv(totPath,sep=";",header=F)
   experiment <-loadExperiment(solPath)
   solutions <- experiment$solutions
-  gr <- cluster_occurrences_aux(solutions,totals)
+  gr <- cluster_occurrences_plot_aux(solutions,totals)
   return(gr)
 }
 
-cluster_occurrences_aux<-function(solutions,totals){
+
+cluster_ocurrences_value<-function(solution,totals){
+  coordinates <- unique(data.frame(x=solution$s,y=solution$g))
+  sum <- 0
+  for (i in c(1:nrow(coordinates))){
+    sum <- sum + totals[coordinates[i,2]+1,coordinates[i,1]+1]
+  }
+  return(sum)
+}
+
+cluster_occurrences_plot_aux<-function(solutions,totals){
   id <- 1
   summation <- data.frame(id=character(), sum=numeric())
   padn <- 2
@@ -539,6 +550,40 @@ cluster_occurrences_aux<-function(solutions,totals){
 }
 
 
+get_coordinate_files<-function(solPath,outputFolder){
+  experiment <-loadExperiment(solPath)
+  solutions <- experiment$solutions
+  dir.create(outputFolder,showWarnings = FALSE)
+  rootFileName<-paste0(outputFolder,"/",strsplit(tail(strsplit(solPath,"/")[[1]],1),".sol")[[1]][1])
+  save_coordinate_dfs(solutions,rootFileName)
+}
+
+save_coordinate_dfs<-function(solutions,rootFileName){
+  padn <- 2
+  if (length(solutions)>=100){
+    padn <- 3
+  }
+  id <- 1
+  for (solution in solutions){
+    write.table(unique(data.frame(x=solution$s,y=solution$g)),
+                sep=";",
+                file = paste0(rootFileName,"_",str_pad(id,padn,"left",pad="0"),".csv"),
+                row.names = F,
+                quote = F
+    )
+    id <- id +1
+  }
+}
+
+get_coordinate_dfs<-function(solutions){
+  id <- 1
+  dfl <- list()
+  for (solution in solutions){
+    dfl[[id]]<-unique(data.frame(x=solution$s,y=solution$g))
+    id <- id +1
+  }
+  return(dfl)
+}
 
 
 

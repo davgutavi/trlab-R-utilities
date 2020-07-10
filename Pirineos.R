@@ -10,6 +10,112 @@ root29 <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/ex
 tot29Path <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/dataset/totales_29.csv"
 tot30Path <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/dataset/totales_30.csv"
  
+# Ficheros de coordenadas ----
+outPutPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/coordenadas"
+ficherosCoordenadas<-function(current,w=40,h=40){
+  sol29 <- paste0(root29,"/",current,"/",current,".sol")
+  get_coordinate_files(sol29,outPutPath)
+  sol30 <- paste0(root30,"/",current,"/",current,".sol")
+  get_coordinate_files(sol30,outPutPath)
+}
+ficherosCoordenadas("t01_p01")
+ficherosCoordenadas("t01_p02")
+ficherosCoordenadas("t01_p03")
+ficherosCoordenadas("t01_p04")
+ficherosCoordenadas("t01_p05")
+ficherosCoordenadas("t02_p01")
+ficherosCoordenadas("t02_p02")
+ficherosCoordenadas("t02_p03")
+ficherosCoordenadas("t02_p04")
+ficherosCoordenadas("t02_p05")
+ficherosCoordenadas("t03_p01")
+ficherosCoordenadas("t03_p02")
+ficherosCoordenadas("t03_p03")
+ficherosCoordenadas("t03_p04")
+ficherosCoordenadas("t03_p05")
+ficherosCoordenadas("t04_p01")
+ficherosCoordenadas("t04_p02")
+ficherosCoordenadas("t04_p03")
+ficherosCoordenadas("t04_p04")
+ficherosCoordenadas("t04_p05")
+ficherosCoordenadas("t05_p01")
+ficherosCoordenadas("t05_p02")
+ficherosCoordenadas("t05_p03")
+ficherosCoordenadas("t05_p04")
+ficherosCoordenadas("t05_p05")
+ficherosCoordenadas("t06_p01")
+ficherosCoordenadas("t06_p02")
+ficherosCoordenadas("t06_p03")
+ficherosCoordenadas("t06_p04")
+ficherosCoordenadas("t06_p05")
+ficherosCoordenadas("t07_p01")
+ficherosCoordenadas("t07_p02")
+ficherosCoordenadas("t07_p03")
+ficherosCoordenadas("t07_p04")
+ficherosCoordenadas("t08_p01")
+
+
+# Mapas con totales ----
+outPutPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/totales"
+pintarTotales<-function(current,w=40,h=40){
+  sol29 <- paste0(root29,"/",current,"/",current,".sol")
+  title29 <- paste0("29-",current)
+  eps29 <- paste0("a29_",current,".eps")
+  pdf29 <- paste0("a29_",current,".pdf")
+  sol30 <- paste0(root30,"/",current,"/",current,".sol")
+  title30 <- paste0("30-",current)
+  eps30 <- paste0("a30_",current,".eps")
+  pdf30 <- paste0("a30_",current,".pdf")
+  
+  pl29<-cluster_total_plot_list(sol29,tot29Path,Xsize,Ysize,title29)
+  maps29<-marrangeGrob(pl29,nrow=2, ncol=2,top=title29)
+  ggsave(pdf29,maps29,"pdf",outPutPath,width=w,height=h,units="cm")
+  
+  pl30<-cluster_total_plot_list(sol30,tot30Path,Xsize,Ysize,title30)
+  maps30<-marrangeGrob(pl30,nrow=2, ncol=2,top=title30)
+  ggsave(pdf30,maps30,"pdf",outPutPath,width=w,height=h,units="cm")
+  
+  #ggsave(eps29,maps29,"eps",outPutPath,width=w,height=h,units="cm")
+  #ggsave(eps30,maps30,"eps",outPutPath,width=w,height=h,units="cm")
+  #grid.draw(maps29)
+  #grid.draw(maps30)
+}
+pintarTotales("t01_p01")
+pintarTotales("t01_p02")
+pintarTotales("t01_p03")
+pintarTotales("t01_p04")
+pintarTotales("t01_p05")
+pintarTotales("t02_p01")
+pintarTotales("t02_p02")
+pintarTotales("t02_p03")
+pintarTotales("t02_p04")
+pintarTotales("t02_p05")
+pintarTotales("t03_p01")
+pintarTotales("t03_p02")
+pintarTotales("t03_p03")
+pintarTotales("t03_p04")
+pintarTotales("t03_p05")
+pintarTotales("t04_p01")
+pintarTotales("t04_p02")
+pintarTotales("t04_p03")
+pintarTotales("t04_p04")
+pintarTotales("t04_p05")
+pintarTotales("t05_p01")
+pintarTotales("t05_p02")
+pintarTotales("t05_p03")
+pintarTotales("t05_p04")
+pintarTotales("t05_p05")
+pintarTotales("t06_p01")
+pintarTotales("t06_p02")
+pintarTotales("t06_p03")
+pintarTotales("t06_p04")
+pintarTotales("t06_p05")
+pintarTotales("t07_p01")
+pintarTotales("t07_p02")
+pintarTotales("t07_p03")
+pintarTotales("t07_p04")
+pintarTotales("t08_p01")
+
 # Mapas blanco y negro ----
 outPutPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/t08" 
 pintarByN<-function(current,w=40,h=40){
@@ -31,38 +137,6 @@ pintarByN<-function(current,w=40,h=40){
   ggsave(eps30,maps30,"eps",outPutPath,width=w,height=h,units="cm")
   ggsave(pdf30,maps30,"pdf",outPutPath,width=w,height=h,units="cm")
 }
-
-# Totales  ----
-outPutPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/totales"
-pintarTotales<-function(current,w=40,h=40){
-  sol29 <- paste0(root29,"/",current,"/",current,".sol")
-  title29 <- paste0("29-",current)
-  eps29 <- paste0("a29_",current,".eps")
-  pdf29 <- paste0("a29_",current,".pdf")
-  sol30 <- paste0(root30,"/",current,"/",current,".sol")
-  title30 <- paste0("30-",current)
-  eps30 <- paste0("a30_",current,".eps")
-  pdf30 <- paste0("a30_",current,".pdf")
-  
-  maps29<-cluster_maps_total(sol29,tot29Path,Xsize,Ysize,title29)
-  #ggsave(eps29,maps29,"eps",outPutPath,width=w,height=h,units="cm")
-  ggsave(pdf29,maps29,"pdf",outPutPath,width=w,height=h,units="cm")
-  #grid.draw(maps29)
-  
-  maps30<-cluster_maps_total(sol30,tot30Path,Xsize,Ysize,title30)
-  #ggsave(eps30,maps30,"eps",outPutPath,width=w,height=h,units="cm")
-  ggsave(pdf30,maps30,"pdf",outPutPath,width=w,height=h,units="cm")
-}
-
-# Pruebas rápidas ----
-pintarTotales("t07_p01")
-pintarTotales("t07_p02")
-pintarTotales("t07_p03")
-pintarTotales("t07_p04")
-pintarTotales("t08_p01")
-
-
-
 
 
 solPath <- paste0(root29,"/t04_p02/t04_p02.sol")
