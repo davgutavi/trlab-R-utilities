@@ -148,13 +148,13 @@ getDatasetValues <- function(datasetInfo) {
   vGCT <- (values[[length(values)]])[nrow(values[[1]]), ncol(values[[1]])]
   
   show(paste0("[", 0, ",", 0, ",", 0, "] - [", 1, ",", 1, ",", 1, "] = ", v000))
-  show(paste0("[",0,",",ncol(values[[1]]) - 1,",",0,"] - [",1,",",ncol(values[[1]]),",",1,"] = ",v0C0 ))
-  show(paste0("[",nrow(values[[1]]) - 1,",",0,",",0,"] - [",nrow(values[[1]]),",",1,",",1,"] = ", vG00))
-  show(paste0("[",nrow(values[[1]]) - 1,",",ncol(values[[1]]) - 1,",",0,"] - [",nrow(values[[1]]),",",ncol(values[[1]]),",",1,"] = ",vGC0))
-  show(paste0("[",0,",",0,",",length(values) - 1,"] - [",1,",",1,",",length(values),"] = ",v00T))
-  show(paste0("[",0,",",ncol(values[[1]]) - 1,",",length(values) - 1,"] - [", 1,",",ncol(values[[1]]),",",length(values),"] = ",v0CT))
-  show(paste0("[",nrow(values[[1]]) - 1,",",0,",",length(values) - 1,"] - [",nrow(values[[1]]),",",1,",",length(values),"] = ",vG0T))
-  show(paste0("[",nrow(values[[1]]) - 1,",",ncol(values[[1]]) - 1,",",length(values) - 1,"] - [",nrow(values[[1]]),",",ncol(values[[1]]),",",length(values),"] = ",vGCT))
+  show(paste0("[",0,",",ncol(values[[1]]) - 1,",",0,"] - [",1,",",ncol(values[[1]]) - 1,",",1,"] = ",v0C0 ))
+  show(paste0("[",nrow(values[[1]]) - 1,",",0,",",0,"] - [",nrow(values[[1]]) - 1,",",1,",",1,"] = ", vG00))
+  show(paste0("[",nrow(values[[1]]) - 1,",",ncol(values[[1]]) - 1,",",0,"] - [",nrow(values[[1]]) - 1,",",ncol(values[[1]]) - 1,",",1,"] = ",vGC0))
+  show(paste0("[",0,",",0,",",length(values) - 1,"] - [",1,",",1,",",length(values) - 1,"] = ",v00T))
+  show(paste0("[",0,",",ncol(values[[1]]) - 1,",",length(values) - 1,"] - [", 1,",",ncol(values[[1]]) - 1,",",length(values) - 1,"] = ",v0CT))
+  show(paste0("[",nrow(values[[1]]) - 1,",",0,",",length(values) - 1,"] - [",nrow(values[[1]]) - 1,",",1,",",length(values) - 1,"] = ",vG0T))
+  show(paste0("[",nrow(values[[1]]) - 1,",",ncol(values[[1]]) - 1,",",length(values) - 1,"] - [",nrow(values[[1]]) - 1,",",ncol(values[[1]]) - 1,",",length(values) - 1,"] = ",vGCT))
   
   return(values)
   

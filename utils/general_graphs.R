@@ -420,10 +420,10 @@ cluster_total_plot_list <- function(solPath,totPath,Xsize,Ysize,title){
   experiment <-loadExperiment(solPath)
   solutions <- experiment$solutions
   
-  explored <- data.frame(x=0,y=seq(0,Ysize-1),level="0")
+  explored <- data.frame(x=0,y=seq(0,Ysize-1),value=0,level ="-1")
   
   for (j in c(1:(Xsize-1))){
-    explored<-rbind(explored,data.frame(x=j,y=seq(0,Ysize-1),level="0"))
+    explored<-rbind(explored,data.frame(x=j,y=seq(0,Ysize-1),value=0,level ="-1"))
   }
   
   grs <- list()
@@ -442,8 +442,6 @@ cluster_total_plot_list <- function(solPath,totPath,Xsize,Ysize,title){
     
     for (j in c(1:nrow(cluster))){
       
-      explored[which(explored$x==cluster[j,]$x&explored$y==cluster[j,]$y),3]="1"
-      
       tv <- totals[cluster[j,]$y+1,cluster[j,]$x+1]
       
       if(tv==0){
@@ -460,6 +458,8 @@ cluster_total_plot_list <- function(solPath,totPath,Xsize,Ysize,title){
       }
       gdata[which(gdata$x==cluster[j,]$x&gdata$y==cluster[j,]$y),3]=tv
       gdata[which(gdata$x==cluster[j,]$x&gdata$y==cluster[j,]$y),4]=l
+      explored[which(explored$x==cluster[j,]$x&explored$y==cluster[j,]$y),3]=tv
+      explored[which(explored$x==cluster[j,]$x&explored$y==cluster[j,]$y),4]=l
     }
     
     sum <- cluster_ocurrences_value(solution,totals)
@@ -483,16 +483,17 @@ cluster_total_plot_list <- function(solPath,totPath,Xsize,Ysize,title){
     i <- i+1
   }
   
+  explored_title <- paste0("Total explored zone, total occurrences = ",sum(explored$value))
   explored$x<- as.character(explored$x)
   explored$y<- as.character(explored$y)
   
   ugr <- ggplot(explored, aes(x, y)) +
     geom_tile(aes(fill = level), colour = "black")+
-    scale_fill_manual(values=c("0"="white","1"="black"),
-                      labels=c("0"="No selected","1"="Selected"))+
+    scale_fill_manual(values=c("-1"="white","0"="black","1"="green","2"="blue","3"="red"),
+                      labels=c("-1"="No selected","0"="0","1"="(0,25]","2"="(25,50]","3"=">50"))+
     scale_x_discrete(limits = unique(explored$x),position = "top")+
     scale_y_discrete(limits = rev(unique(explored$y)))+
-    labs(x="X", y="Y", title="Explored")+
+    labs(x="X", y="Y", title=explored_title)+
     theme(legend.title = element_blank())
   
   grs[[length(grs)+1]]<-ugr

@@ -9,7 +9,30 @@ root30 <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/ex
 root29 <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/andorra29"
 tot29Path <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/dataset/totales_29.csv"
 tot30Path <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/dataset/totales_30.csv"
- 
+
+# Nuevos mapas con zonas pequeñas 
+outPutPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/nuevos"
+pintarTotales29<-function(current,w=40,h=40){
+  sol29 <- paste0(root29,"/",current,"/",current,".sol")
+  title29 <- paste0("29-",current)
+  eps29 <- paste0("a29_",current,".eps")
+  pdf29 <- paste0("a29_",current,".pdf")
+  
+  pl29<-cluster_total_plot_list(sol29,tot29Path,Xsize,Ysize,title29)
+  maps29<-marrangeGrob(pl29,nrow=2, ncol=2,top=title29)
+  ggsave(pdf29,maps29,"pdf",outPutPath,width=w,height=h,units="cm")
+
+  #ggsave(eps29,maps29,"eps",outPutPath,width=w,height=h,units="cm")
+  #grid.draw(maps29)
+}
+
+test<-cluster_total_plot_list("/Users/davgutavi/Desktop/test4/test4.sol",tot29Path,Xsize,Ysize,"Test")
+testmap<-marrangeGrob(test,nrow=2, ncol=2,top="Test")
+ggsave("test4.pdf",testmap,"pdf","/Users/davgutavi/Desktop",width=40,height=40,units="cm")
+
+
+
+
 # Ficheros de coordenadas ----
 outPutPath <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/mapas/coordenadas"
 ficherosCoordenadas<-function(current,w=40,h=40){
