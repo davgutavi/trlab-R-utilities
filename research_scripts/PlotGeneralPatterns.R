@@ -1,4 +1,4 @@
 source("utils/general_graphs.R")
 
-input <- "/Users/davgutavi/NAS_DAVGUTAVI/INVESTIGACION/zonificacion_pirineos/experimentos/andorra30/e01/e01.sol"
+input <- "/Users/davgutavi/triclustering_france/experiment_03/experiment_03.sol"
 plotPatterns(input)
