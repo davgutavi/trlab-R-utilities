@@ -1,0 +1,61 @@
+---
+title: TrLab Experiment Report
+date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
+params:
+  path: 
+    value: NA
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+\pagebreak
+
+```{r setup , include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE , warning = FALSE , results = "asis")
+source("load_environment.R", local = knitr::knit_global())
+# Set the experiment .sol absolute path
+solPath <- "/Users/davgutavi/triclustering_france/experiment_01/experiment_01.sol"
+experiment <- loadExperiment(solPath)
+```
+
+# TRIQ values
+
+```{r}
+parent_path <- dirname(solPath)
+sol_name <- basename(solPath)
+experiment_name <- unlist(strsplit(sol_name, "\\."))[1]
+filename <- paste(experiment_name,"_triq.csv",sep="")
+filepath <- paste(parent_path,filename,sep="/")
+csv <- read.csv(filepath, sep = ";" , header = TRUE )[-c(7:10)]
+csv[is.na(csv)] <- ""
+kable(csv)
+```
+
+# Solutions
+
+```{r}
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

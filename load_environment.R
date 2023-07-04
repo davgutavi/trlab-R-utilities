@@ -19,14 +19,17 @@ closeXmlResources <- function() {
 # Load an experiment: (solutions, dataset_info, dataset_values) from .sol file ----
 loadExperiment <- function (solutionFilePath){
   
-  ##***Lectura del fichero .sol
+  #****Lectura del fichero .sol
   props <- read.properties(solutionFilePath)
-  ##***Obtener información del dataset
+  #****Obtener información del dataset
   datasetInfo <- getDataset(props$dataset)
   #****Obtener valores del dataset
   datasetValues <- getDatasetValues(datasetInfo)
   #****Obtener los puntos [gen,condición,tiempo,expresión génica] de cada solución
   solutions <-getTriclusters(props,datasetValues)
+  
+  #****Lectura del fichero de valoeres de TRIQ: experimentName_triq.csv
+  
   
   return(list(solutions = solutions,dataset_info= datasetInfo,dataset_values=datasetValues))
 }

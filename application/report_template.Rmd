@@ -1,0 +1,80 @@
+---
+title: Triclusters Report
+date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
+params:
+  path: 
+    value: NA
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+\pagebreak
+
+```{r setup , include=FALSE}
+
+library("knitr")
+library("rmarkdown")
+library("gridExtra")
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE , warning = FALSE , results = "asis")
+
+```
+
+```{r}
+source("Graphs_Generator.R", local = knitr::knit_global())
+```
+
+# Solutions found
+
+The triclusters found by the algorithm are the following:
+
+```{r}
+
+csv <- get_triq(params$path)
+triq_params <- mapply(as.numeric, get_triq_params(csv))
+colnames(triq_params) <- c("TRIQ","BIOQ","TRIQN","BIOQN","GRQ","PEQ","SPQ")
+rownames(triq_params) <- paste0("Solution ", seq_len(nrow(triq_params)))
+kable(triq_params)
+
+```
+
+# Graphs 
+
+```{r}
+
+paths <- get_solutions(params$path)
+
+for(i in 1:length(paths)) {
+  solution <- read.csv(paths[i],header = TRUE,sep = ";")
+  # Gráfica de la izquierda
+  df_times <- get_plots( solution , "t" , "s" , i)
+  # Gráfica del medio
+  df_conditions <- get_plots( solution , "s" , "t" , i)
+  # Gráfica de la derecha
+  df_genes <- get_plots( solution, "s" , "g" , i)
+
+  # We now print all graphs
+  header <- paste( "## Solution" , i , "\n\n" , sep = " ")
+  cat(header)
+  cat("### Expresion based on time \n\n")
+  ml <- marrangeGrob(df_times, ncol=2, nrow = 2)
+  print(ml)
+  cat("\n\n")
+  cat("### Expresion based on experimental conditions \n\n")
+  ml <- marrangeGrob(df_conditions, ncol=2, nrow = 2)
+  print(ml)
+  cat("\n\n")
+  cat("### Temporal change of genes \n\n")
+  ml <- marrangeGrob(df_genes, ncol=2, nrow = 2)
+  print(ml)
+  cat("\n\n")
+  
+}
+
+```
+
