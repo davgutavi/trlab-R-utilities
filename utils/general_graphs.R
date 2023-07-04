@@ -8,6 +8,9 @@ require(stringr)
 paleta <- c("#7FFFD4","#FFE4C4","#8B7355","#7FFF00","#FF7F24","#00BFFF","#FFC0CB","#CD4F39","#A8A8A8","#6495ED","#FF4040","#FF1493","#0000EE","#00CD00","#8968CD","#CD00CD","#98F5FF","#006400","#FFFACD")
 
 
+
+
+
 plotPatterns <- function(solPath){
   
   experiment <- loadExperiment(solPath)
@@ -139,6 +142,43 @@ paintSolutionsCombo<- function(solutions,genesList,samplesList,timesList,outPath
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 cell_pattern_plot_list <-function(inputSolPath, xl="Features", yl="Occurrences"){
   experiment <-loadExperiment(inputSolPath)
