@@ -59,7 +59,7 @@ for(i in 1:length(paths)) {
   df_genes <- get_plots( solution, "s" , "g" , i)
 
   # We now print all graphs
-  header <- paste( "## Solution" , i , "\n\n" , sep = " ")
+  header <- paste("## Solution" , i , "\n\n" , sep = " ")
   cat(header)
   cat("### Expresion based on time \n\n")
   ml <- marrangeGrob(df_times, ncol=2, nrow = 2)

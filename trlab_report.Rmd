@@ -3,16 +3,12 @@ title: TrLab Experiment Report
 date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
 output: 
   pdf_document:
-    toc: true
-    toc_depth: 3
-  html_document:
-    toc: true
-    toc_depth: 3
+      toc: true
 ---
 
-\pagebreak
+\newpage
 
-```{r setup , include=FALSE}
+```{r, environment, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE , warning = FALSE , results = "asis")
 source("load_environment.R", local = knitr::knit_global())
 source("./utils/experiment_management.R", local = knitr::knit_global())
@@ -22,6 +18,15 @@ solPath <- "/Users/davgutavi/triclustering_france/experiment_01/experiment_01.so
 # Load experiment
 experiment <- loadExperiment(solPath)
 
+
+
+
+
+```
+
+# TRIQ analysis
+
+```{r, triq}
 # Load TRIQ analysis
 parent_path <- dirname(solPath)
 sol_name <- basename(solPath)
@@ -30,50 +35,34 @@ filename <- paste(experiment_name,"_triq.csv",sep="")
 filepath <- paste(parent_path,filename,sep="/")
 triq <- read.csv(filepath, sep = ";" , header = TRUE )[-c(7:10)]
 triq[is.na(triq)] <- ""
+# Print table
+knitr::kable(triq)
+```
+
+# Graphical analysis
+
+```{r, graphs,fig.width = 5, fig.height=8, fig.align='center'}
 
 # Build pattern graphs
 patternGraphs <- buildExperimentPatternGraphs(experiment,
   value_tag = "consumption",
   layer_tag = "year",
   instance_tag = "time slot",
-  ial_title = "Monthly consumption series for each year",
-  ila_title = "Yearly consumption series for each month",
-  lia_title = "Annual consumption for each month")
+  ial_title = "",
+  ila_title = "",
+  lia_title = "")
 
-```
-
-# TRIQ analysis
-
-```{r}
-knitr::kable(triq)
-```
-
-# Graphical analysis
-
-```{r}
 i <- 1
 for (sol_gr in patternGraphs){
-  cat(paste0( "## Solution " , i , "\n\n"))
+  cat(paste0("\n## Solution " , i, "\n\n"))
+  cat(paste0("### [Solution ",i,"] Monthly consumption series for each year\n\n"))
   print(sol_gr$ial)
+  cat("\n\n")
+  cat(paste0("### [Solution ",i,"] Yearly consumption series for each month\n\n"))
   print(sol_gr$ila)
+  cat("\n\n")
+  cat(paste0("### [Solution ",i,"] Annual consumption for each month\n\n"))
   print(sol_gr$lia)
   i <- i+1
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
