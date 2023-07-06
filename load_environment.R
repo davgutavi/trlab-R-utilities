@@ -16,6 +16,11 @@ closeXmlResources <- function() {
   rsList <<- NULL
 }
 
+
+
+
+
+
 # Load an experiment: (solutions, dataset_info, dataset_values) from .sol file ----
 loadExperiment <- function (solutionFilePath){
   
@@ -29,10 +34,30 @@ loadExperiment <- function (solutionFilePath){
   solutions <-getTriclusters(props,datasetValues)
   
   #****Lectura del fichero de valoeres de TRIQ: experimentName_triq.csv
-  
-  
   return(list(solutions = solutions,dataset_info= datasetInfo,dataset_values=datasetValues))
 }
+
+
+load_experiment_with_loaded_dataset <- function(solution_path, loaded_dataset){
+  props <- read.properties(solution_path)
+  solutions <-getTriclusters(props,loaded_dataset$dataset_values)
+  return(list(solutions = solutions,dataset_info= loaded_dataset$dataset_info,
+              dataset_values=loaded_dataset$dataset_values))
+}
+
+
+
+load_dataset_by_name <- function(dataset_name){
+  datasetInfo <- getDataset(dataset_name)
+  datasetValues <- getDatasetValues(datasetInfo)
+  return(list(dataset_info= datasetInfo,dataset_values=datasetValues))
+}
+
+
+
+
+
+
 
 # Triclustering parser ---- 
 getTriclusters<-function(solProperties,datasetValues){
@@ -41,6 +66,8 @@ getTriclusters<-function(solProperties,datasetValues){
   
   triclusters <- list()
   
+  print(paste0("Loading ",length(aux)," solutions"))
+  i <- 1
   for(sol in aux){
     
     parts <- unlist(strsplit(sol,";"))
@@ -50,6 +77,8 @@ getTriclusters<-function(solProperties,datasetValues){
     tv <- as.numeric(unlist(strsplit(parts[3],",")))
     
     tri <- data.frame(g = numeric(0), s=numeric(0), t=numeric(0), el=numeric(0))
+   
+    print(paste0("Loading solution ",i," [",length(gv),",",length(sv),",",length(tv),"]"))
     
     for (g in gv){
       
@@ -72,7 +101,7 @@ getTriclusters<-function(solProperties,datasetValues){
     # str(tri)
     
     triclusters[[length(triclusters)+1]]<-tri
-    
+    i<-i+1
   }
   
   return(triclusters)

@@ -183,12 +183,24 @@ buildExperimentPatternGraphs <- function(experiment,
                                          ial_title = "Attributes for each Layer",
                                          ila_title = "Layers for each Attribute",
                                          lia_title = "Instances for each Attribute",
-                                         visible_ticks = 5) {
+                                         visible_ticks = 5, 
+                                         index_graphs = TRUE) {
   tags <- getGraphicalTags(experiment)
   solutions <- experiment$solutions
   gr_pattern_list <- list()
   i <- 1
+  
+  ial_title_base <- ial_title
+  ila_title_base <- ila_title
+  lia_title_base <- lia_title
+  
   for (sol in solutions) {
+    
+    if(index_graphs){
+      ial_title <- paste0("[Solution ",i,"] ",ial_title_base)
+      ila_title <- paste0("[Solution ",i,"] ",ila_title_base)
+      lia_title <- paste0("[Solution ",i,"] ",lia_title_base)
+    }
     
     gr_pattern_list[[i]] <- buildSolutionPatternGraph(
       sol,
@@ -213,3 +225,30 @@ buildExperimentPatternGraphs <- function(experiment,
   return(gr_pattern_list)
   
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

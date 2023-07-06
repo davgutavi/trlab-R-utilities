@@ -11,37 +11,35 @@ output:
 ```{r, environment, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE , warning = FALSE , results = "asis")
 source("load_environment.R", local = knitr::knit_global())
+source("./utils/triq_management.R", local = knitr::knit_global())
 source("./utils/experiment_management.R", local = knitr::knit_global())
 # Set the experiment .sol absolute path
 solPath <- "/Users/davgutavi/triclustering_france/experiment_01/experiment_01.sol"
-
 # Load experiment
 experiment <- loadExperiment(solPath)
-
-
-
-
-
 ```
 
-# TRIQ analysis
+\section{TRIQ analysis}
+\Large
 
 ```{r, triq}
 # Load TRIQ analysis
-parent_path <- dirname(solPath)
-sol_name <- basename(solPath)
-experiment_name <- unlist(strsplit(sol_name, "\\."))[1]
-filename <- paste(experiment_name,"_triq.csv",sep="")
-filepath <- paste(parent_path,filename,sep="/")
-triq <- read.csv(filepath, sep = ";" , header = TRUE )[-c(7:10)]
-triq[is.na(triq)] <- ""
+triq_data <- load_triq_values(solPath,experiment$dataset_info$.attrs[14])
+rounded_triq_data <- round_triq_data(triq_data)
+
+cat(paste0("Best solution found: Solution ",rounded_triq_data$best_tricluster_id,"\n\n"))
+cat(paste0("Best TRIQ value: ",rounded_triq_data$best_triq_value,"\n\n"))
+cat(paste0("TRIQ mean: ",rounded_triq_data$triq_mean,"\n\n"))
+cat(paste0("TRIQ stdev: ",rounded_triq_data$triq_stdev,"\n\n"))
+triq_table <- get_triq_table(rounded_triq_data$triq_solutions)
+
 # Print table
-knitr::kable(triq)
+knitr::kable(triq_table)
 ```
 
-# Graphical analysis
+\section{Graphical analysis}
 
-```{r, graphs,fig.width = 5, fig.height=8, fig.align='center'}
+```{r, graphs,fig.width = 8, fig.height=9, fig.align='center'}
 
 # Build pattern graphs
 patternGraphs <- buildExperimentPatternGraphs(experiment,
@@ -52,17 +50,19 @@ patternGraphs <- buildExperimentPatternGraphs(experiment,
   ila_title = "",
   lia_title = "")
 
+
 i <- 1
 for (sol_gr in patternGraphs){
-  cat(paste0("\n## Solution " , i, "\n\n"))
-  cat(paste0("### [Solution ",i,"] Monthly consumption series for each year\n\n"))
+  cat(paste0("\\subsection{Solution " , i, "}\n\n"))
+  cat(paste0("\\subsubsection{Monthly consumption series for each year for Solution ",i,"}\n\n"))
   print(sol_gr$ial)
   cat("\n\n")
-  cat(paste0("### [Solution ",i,"] Yearly consumption series for each month\n\n"))
+  cat(paste0("\\subsubsection{Yearly consumption series for each month for Solution ",i,"}\n\n"))
   print(sol_gr$ila)
   cat("\n\n")
-  cat(paste0("### [Solution ",i,"] Annual consumption for each month\n\n"))
+  cat(paste0("\\subsubsection{Annual consumption for each month for Solution ",i,"}\n\n"))
   print(sol_gr$lia)
+  cat("\n\n")
   i <- i+1
 }
 ```

@@ -1,0 +1,21 @@
+---
+title: "test"
+author: "davgutavi"
+date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
+output: 
+  pdf_document:
+      toc: true
+---
+
+# Graphical analysis
+
+```{r setup, echo = FALSE, message = FALSE , warning = FALSE , results = "asis", size="Huge"}
+cat("\\section{Section 1}\n\n")
+cat("\\subsection{Section 1.1}\n\n")
+cat("\\subsubsection{Section 1.1.1}\n\n")
+cat("\\subsubsection{Section 1.1.2}\n\n")
+
+```
+
+
+
