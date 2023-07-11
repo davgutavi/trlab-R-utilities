@@ -1,6 +1,5 @@
 ---
-title: TrLab Experiment Report
-date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
+title: "TrLab experiment report: all_003"
 output: 
   pdf_document:
       toc: true
@@ -14,7 +13,7 @@ source("load_environment.R", local = knitr::knit_global())
 source("./utils/triq_management.R", local = knitr::knit_global())
 source("./utils/experiment_management.R", local = knitr::knit_global())
 # Set the experiment .sol absolute path
-solPath <- "/Users/davgutavi/triclustering_france/experiment_01/experiment_01.sol"
+solPath <- "/Users/davgutavi/triclustering_france/all_003/all_003.sol"
 # Load experiment
 experiment <- loadExperiment(solPath)
 ```

@@ -21,3 +21,6 @@ install.packages("stringr")
 install.packages("usefun")
 install.packages("dplyr")
 install.packages("kableExtra")
+# *****
+install.packages("rgl")
+install.packages("reshape2")
