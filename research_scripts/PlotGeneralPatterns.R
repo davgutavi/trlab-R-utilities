@@ -2,10 +2,11 @@ source("load_environment.R")
 source("utils/general_graphs.R")
 source("utils/experiment_management.R")
 
-dataset <- load_dataset_by_name("france-monthly")
+dataset <- load_dataset_by_name("france-all-monthly")
 
-solPath <- "/Users/davgutavi/triclustering_france/france/france.sol"
-solPath <- "/Users/davgutavi/triclustering_france/exp001/exp001.sol"
+solPath <- "/Users/davgutavi/triclustering_dev/dev_010/dev_010.sol"
+# solPath <- "/Users/davgutavi/triclustering_france/france/france.sol"
+# solPath <- "/Users/davgutavi/triclustering_france/exp001/exp001.sol"
 
 # experiment <- loadExperiment(input)
 experiment <- load_experiment_with_loaded_dataset(solPath,dataset)
@@ -40,6 +41,15 @@ for (sol_gr in patternGraphs){
   dev.off() 
   i <- i+1
 }
+
+for (sol_gr in patternGraphs){
+  print(sol_gr$ial)
+  print(sol_gr$ila)
+  print(sol_gr$lia)  
+  i <- i+1
+}
+
+print(patternGraphs[[1]]$ial)
 
 
 i <- 1
