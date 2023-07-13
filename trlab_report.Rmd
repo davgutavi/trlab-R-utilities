@@ -1,5 +1,5 @@
 ---
-title: "TrLab experiment report: it2_008"
+title: "TrLab experiment report: exp004"
 output: 
   pdf_document:
       toc: true
@@ -13,7 +13,7 @@ source("load_environment.R", local = knitr::knit_global())
 source("./utils/triq_management.R", local = knitr::knit_global())
 source("./utils/experiment_management.R", local = knitr::knit_global())
 # Set the experiment .sol absolute path
-solPath <- "/Users/davgutavi/triclustering_france/it2_008/it2_008.sol"
+solPath <- "/Users/davgutavi/triclustering_france/iteration1/exp004/exp004.sol"
 # Load experiment
 experiment <- loadExperiment(solPath)
 ```
