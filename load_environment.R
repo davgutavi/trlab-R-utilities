@@ -1,7 +1,7 @@
 # General variables and libraries ----
 require(properties)
 require(XML)
-TrLabPath <- "/Users/davgutavi/TrLab"
+TrLabPath <- "/Users/davgutavi/TrLab4.0"
 rsFolderPath <- paste0(TrLabPath,"/resources")
 rsFilePath <- paste0(TrLabPath,"/resources/resources.xml")
 rsData <- xmlParse(rsFilePath)

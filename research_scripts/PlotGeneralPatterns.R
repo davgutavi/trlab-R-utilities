@@ -2,9 +2,11 @@ source("load_environment.R")
 source("utils/general_graphs.R")
 source("utils/experiment_management.R")
 
-dataset <- load_dataset_by_name("france-all-monthly")
+dataset <- load_dataset_by_name("france-monthly")
 
 solPath <- "/Users/davgutavi/triclustering_dev/dev_010/dev_010.sol"
+
+solPath <- "/Users/davgutavi/triclustering_france/it1_001/it1_001.sol"
 # solPath <- "/Users/davgutavi/triclustering_france/france/france.sol"
 # solPath <- "/Users/davgutavi/triclustering_france/exp001/exp001.sol"
 
@@ -20,7 +22,7 @@ patternGraphs <- buildExperimentPatternGraphs(experiment,
                                               ila_title = "Yearly consumption series for each month",
                                               lia_title = "Annual consumption for each month")
 
-
+patternGraphs[[1]]$ial
 
 
 
