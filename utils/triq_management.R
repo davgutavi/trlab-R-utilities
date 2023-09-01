@@ -95,9 +95,6 @@ load_triq_values <- function(solution_path, dataset_type) {
   
 }
 
-
-
-
 get_triq_table <- function(triq_solution_table, row_tag = "Solution") {
   triq_table <- t(as_tibble(triq_solution_table))
   rnames <- c()

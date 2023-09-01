@@ -1,5 +1,4 @@
-source("load_environment.R")
-source("utils/general_graphs.R")
+source("system/load_environment.R")
 source("utils/experiment_management.R")
 
 dataset <- load_dataset_by_name("france-monthly")

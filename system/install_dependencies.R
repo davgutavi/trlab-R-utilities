@@ -24,3 +24,4 @@ install.packages("kableExtra")
 # *****
 install.packages("rgl")
 install.packages("reshape2")
+install.packages("modeest")

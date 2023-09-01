@@ -1,16 +1,11 @@
-source("load_environment.R")
-source("utils/general_graphs.R")
+source("system/load_environment.R")
 
-
-dataset <- load_dataset_by_name("france-monthly")
-
+dataset <- loadDatasetByTrLabName("france-monthly")
 solPath <- "/Users/davgutavi/triclustering_france/iteration_2/it2_004/it2_004.sol"
-
-solPath <- "/Users/davgutavi/triclustering_france/iteration_1/it1_002/it1_002.sol"
+# solPath <- "/Users/davgutavi/triclustering_france/iteration_1/it1_002/it1_002.sol"
 
 # experiment <- loadExperiment(input)
-experiment <- load_experiment_with_loaded_dataset(solPath,dataset)
-
+experiment <- loadExperimentFromLoadedDataset(solPath,dataset)
 
 # plotPatterns(input)
 source("development/experiment_management_dev.R")
@@ -25,17 +20,3 @@ patternGraphs <- buildExperimentPatternGraphs(experiment,
 
 patternGraphs[[1]]$ial
 patternGraphs[[1]]$ila
-
-
-
-factor(experiment$solutions[[1]]$g)
-
-
-solution_path <- "/Users/davgutavi/triclustering_france/experiment_01/experiment_01.sol"
-parent_path <- dirname(solution_path)
-sol_name <- basename(solution_path)
-experiment_name <- unlist(strsplit(sol_name, "\\."))[1]
-filename <- paste(experiment_name,"_triq.csv",sep="")
-
-filepath <- paste(parent_path,filename,sep="/")
-csv <- read.csv(filepath, sep = ";" , header = TRUE )
