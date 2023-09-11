@@ -20,3 +20,9 @@ patternGraphs <- buildExperimentPatternGraphs(experiment,
 
 patternGraphs[[1]]$ial
 patternGraphs[[1]]$ila
+patternGraphs[[1]]$lia
+
+
+solPath <- "/Users/davgutavi/triclustering_france/iteration_2/it2_004/it2_004.sol"
+# Load experiment
+experiment <- loadExperimentFromPath(solPath)

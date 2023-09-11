@@ -1,0 +1,68 @@
+---
+title: "TrLab experiment report: exp004"
+output: 
+  pdf_document:
+      toc: true
+---
+
+\newpage
+
+```{r, environment, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE , warning = FALSE , results = "asis")
+source("../system/load_environment.R", local = knitr::knit_global())
+source("../utils/triq_report.R", local = knitr::knit_global())
+source("../utils/tricluster_plots.R", local = knitr::knit_global())
+# Set the experiment .sol absolute path
+solPath <- "/Users/davgutavi/triclustering_france/iteration_2/it2_004/it2_004.sol"
+# Load experiment
+experiment <- loadExperimentFromPath(solPath)
+```
+
+\section{TRIQ analysis}
+\Large
+
+```{r, triq}
+# Load TRIQ analysis
+rounded_triq_analysis <- round_triq_analysis(experiment$triq_analysis)
+
+cat(paste0("Best solution found: Solution ",rounded_triq_analysis$best_tricluster_id,"\n\n"))
+cat(paste0("Best TRIQ value: ",rounded_triq_analysis$best_triq_value,"\n\n"))
+cat(paste0("TRIQ mean: ",rounded_triq_analysis$triq_mean,"\n\n"))
+cat(paste0("TRIQ stdev: ",rounded_triq_analysis$triq_stdev,"\n\n"))
+cat("\\vspace{1cm}")
+triq_table <- get_triq_table(rounded_triq_analysis$triq_solutions)
+
+# Print table
+knitr::kable(triq_table)
+```
+
+\section{Graphical analysis}
+
+```{r, graphs,fig.width = 8, fig.height=9, fig.align='center'}
+
+# Build pattern graphs
+patternGraphs <- buildExperimentPatternGraphs(experiment,
+                                              value_tag = "consumption",
+                                              layer_tag = "year",
+                                              instance_tag = "time slot",
+                                              ial_title = "",
+                                              ila_title = "",
+                                              lia_title = "",
+                                              visible_ticks = 20)
+
+
+i <- 1
+for (sol_gr in patternGraphs){
+  cat(paste0("\\subsection{Solution " , i, "}\n\n"))
+  cat(paste0("\\subsubsection{Monthly consumption series for each year for Solution ",i,"}\n\n"))
+  print(sol_gr$ial)
+  cat("\n\n")
+  cat(paste0("\\subsubsection{Yearly consumption series for each month for Solution ",i,"}\n\n"))
+  print(sol_gr$ila)
+  cat("\n\n")
+  cat(paste0("\\subsubsection{Annual consumption for each month for Solution ",i,"}\n\n"))
+  print(sol_gr$lia)
+  cat("\n\n")
+  i <- i+1
+}
+```

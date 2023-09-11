@@ -1,20 +1,42 @@
 require(lattice)
 
+getLegend <- function(legend_tag_list){
+  legend_tag_list_length <- length(legend_tag_list)
+  cols <- 0
+  if (legend_tag_list_length<=4){
+    cols <- legend_tag_list_length
+  }
+  else{
+    cols <- ceiling(legend_tag_list_length/2)
+  }
+  return (list(text=legend_tag_list, space = "top",
+               columns=cols))
+}
+
+
 getAtLabels <-
   function(solution_instances,
            instance_tags,
            visible_ticks = 5) {
     f_sol_intances <- factor(solution_instances)
-    total_ticks <- length(levels(f_sol_intances))-2
+    # total_ticks <- length(levels(f_sol_intances))-2
+    total_ticks <- length(levels(f_sol_intances))
+    
+    if (visible_ticks == "all"){
+      visible_ticks = total_ticks
+    }
+    
     div <- ceiling(total_ticks / visible_ticks)
     
-    at <- c(2)
+    # at <- c(2)
+    at <- c(1)
     i <- div
     while (i <= total_ticks - 1) {
       at <- c(at, i)
       i <- i + div
     }
-    at <- c(at, total_ticks - 1)
+    # at <- c(at, total_ticks - 1)
+    at <- c(at, total_ticks)
     
     labels <- c()
     for (tck in at) {
@@ -92,11 +114,12 @@ buildSolutionPatternGraph <- function(solution,
     type = "a",
     font = "mono",
     scales = list(
-      x = list(at = at_labels$at, labels = at_labels$labels),
+      x = list(at = at_labels$at, labels = at_labels$labels, rot=90),
       cex = axis
     ),
     layout = c(1, nlevels(f_layer)),
-    strip = strip.custom(factor.levels = layers, par.strip.text = boxes)
+    strip = strip.custom(factor.levels = layers, par.strip.text = boxes),
+    auto.key =getLegend(attributes)
   )
   
   # ILA
@@ -112,11 +135,12 @@ buildSolutionPatternGraph <- function(solution,
     type = "a",
     font = "mono",
     scales = list(
-      x = list(at = at_labels$at, labels = at_labels$labels),
+      x = list(at = at_labels$at, labels = at_labels$labels, rot=90),
       cex = axis
     ),
     layout = c(1, nlevels(f_attr)),
-    strip = strip.custom(factor.levels = attributes, par.strip.text = boxes)
+    strip = strip.custom(factor.levels = attributes, par.strip.text = boxes),
+    auto.key = getLegend(layers)
   )
   
   # LIA
@@ -140,30 +164,6 @@ buildSolutionPatternGraph <- function(solution,
   
 }
 
-
-#' getGraphicalTags
-#'
-#' From an experiment object get the resources to make graphs
-#' @param experiment A experiment list
-#' @return A list with rows, columns and slide tags as a vector.
-getGraphicalTags <- function(experiment) {
-  # Getting the rows, columns and slide tags file paths
-  paths <- getGSTtags(experiment$dataset_info)
-  
-  # Getting the tags from files
-  in_tags <- as.vector(read.table(paths["genes"], sep = "\n")$V1)
-  at_tags <- as.vector(read.table(paths["samples"], sep = "\n")$V1)
-  sl_tags <- as.vector(read.table(paths["times"], sep = "\n")$V1)
-  
-  return(list(
-    instance_tags = in_tags,
-    attribute_tags = at_tags,
-    slide_tags = sl_tags
-  ))
-  
-}
-
-
 #' buildExperimentPatternGraphs
 #'
 #' Builds the solution combo without printing on any device
@@ -185,7 +185,6 @@ buildExperimentPatternGraphs <- function(experiment,
                                          lia_title = "Instances for each Attribute",
                                          visible_ticks = 5, 
                                          index_graphs = TRUE) {
-  tags <- getGraphicalTags(experiment)
   solutions <- experiment$solutions
   gr_pattern_list <- list()
   i <- 1
@@ -204,7 +203,7 @@ buildExperimentPatternGraphs <- function(experiment,
     
     gr_pattern_list[[i]] <- buildSolutionPatternGraph(
       sol,
-      tags,
+      experiment$dataset_tags,
       w,
       h,
       fsizeXaxis,
