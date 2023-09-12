@@ -263,3 +263,51 @@ load_triq_analysis <- function(solution_path, dataset_type) {
   return(triq_analysis)
   
 }
+
+# ACCESS functions ----
+
+
+getSolutionDymensionCoordinates <- function(solution_index, dymension, experiment){
+  coordinates <- switch(  
+    dymension,  
+    "i"= as.numeric(levels(factor(experiment$solutions[[solution_index]]$g))),  
+    "a"= as.numeric(levels(factor(experiment$solutions[[solution_index]]$s))),  
+    "l"= as.numeric(levels(factor(experiment$solutions[[solution_index]]$t))),  
+    "v"= experiment$solutions[[solution_index]]$el
+  )  
+  return (coordinates)
+}  
+
+
+getSolutionCoordinates <- function(solution_index, experiment){
+  instance_coordinates <- getSolutionDymensionCoordinates(solution_index,"i",experiment)
+  attribute_coordinates <- getSolutionDymensionCoordinates(solution_index,"a",experiment)
+  layer_coordinates <- getSolutionDymensionCoordinates(solution_index,"l",experiment)
+  value_coordinates <- getSolutionDymensionCoordinates(solution_index,"v",experiment)
+  return(list(instances=instance_coordinates,attributes=attribute_coordinates,
+              layers=layer_coordinates,values=value_coordinates))
+}
+
+
+getExperimentDymensionCoordinates <- function(dymension, experiment){
+  coordinates <- list()
+  solution_index <- 1
+  while(solution_index <= length(experiment$solutions)){
+    coordinates[[solution_index]] <- getSolutionDymensionCoordinates(solution_index,dymension,experiment)
+    solution_index <- solution_index + 1
+  }
+  return(coordinates)
+}
+
+
+getExperimentCoordinates <- function(experiment){
+  coordinates <- list()
+  solution_index <- 1
+  while(solution_index <= length(experiment$solutions)){
+    coordinates[[solution_index]] <- getSolutionCoordinates(solution_index,experiment)
+    solution_index <- solution_index + 1
+  }
+  return(coordinates)
+}
+
+
