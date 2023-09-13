@@ -1,5 +1,5 @@
 ---
-title: "TrLab experiment report: exp004"
+title: "TrLab experiment report: it1_002"
 output: 
   pdf_document:
       toc: true
@@ -9,36 +9,81 @@ output:
 
 ```{r, environment, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE , warning = FALSE , results = "asis")
+require(kableExtra)
 source("../system/load_environment.R", local = knitr::knit_global())
+source("../utils/experiment_analysis.R", local = knitr::knit_global())
 source("../utils/triq_report.R", local = knitr::knit_global())
 source("../utils/tricluster_plots.R", local = knitr::knit_global())
 # Set the experiment .sol absolute path
-solPath <- "/Users/davgutavi/triclustering_france/iteration_2/it2_004/it2_004.sol"
+solPath <- "/Users/davgutavi/triclustering_france/iteration_1/it1_002/it1_002.sol"
 # Load experiment
 experiment <- loadExperimentFromPath(solPath)
 ```
 
+\section{Experiment analysis}
+
+\subsection{Summary}
+```{r, exp_summary}
+summary_table <- getExperimentSummary(experiment)
+kbl(summary_table, booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"),
+                full_width = F,
+                font_size = 10)
+```
+
+\newpage
+\subsection{Coverage}
+```{r, exp_instances, fig.width = 8, fig.height = 25, fig.align='center'}
+instanceExperimentCoordinates <- getExperimentDymensionCoordinates("i",experiment)
+instanceOverlappingData <- getOverlappingGraphData(instanceExperimentCoordinates,experiment$dataset_tags$instance_tags)
+reducedInstanceTicks <- getReducedAxisTicks(instanceExperimentCoordinates,experiment$dataset_tags$instance_tags)
+instanceGraph <- buildOverlappingGraph(instanceOverlappingData,reduced_instance_ticks=reducedInstanceTicks,
+                                       dymension_font_size = 14,
+                                       tricluster_font_size = 14,
+                                       yes_color="red",
+                                       cell_line_size=0.001)
+cat("\\subsubsection{Istance coverage: Time slots}\n\n")
+cat("\\newpage")
+print(instanceGraph)
+```
+
+```{r, exp_attributes, fig.width = 2, fig.height = 3, fig.align='center'}
+attributeExperimentCoordinates <- getExperimentDymensionCoordinates("a",experiment)
+attributeOverlappingData <- getOverlappingGraphData(attributeExperimentCoordinates,experiment$dataset_tags$attribute_tags)
+attributeGraph <- buildOverlappingGraph(attributeOverlappingData,yes_color="green")
+cat("\\subsubsection{Attribute coverage: Months}\n\n")
+print(attributeGraph)
+```
+
+```{r, exp_layers, fig.width = 2, fig.height = 3, fig.align='center'}
+layerExperimentCoordinates <- getExperimentDymensionCoordinates("l",experiment)
+layerOverlappingData <- getOverlappingGraphData(layerExperimentCoordinates,experiment$dataset_tags$slide_tags)
+layerGraph <- buildOverlappingGraph(layerOverlappingData,yes_color="blue")
+cat("\\subsubsection{Layer coverage: Years}\n\n")
+print(layerGraph)
+```
+
+
+\newpage
 \section{TRIQ analysis}
 \Large
-
 ```{r, triq}
-# Load TRIQ analysis
 rounded_triq_analysis <- round_triq_analysis(experiment$triq_analysis)
-
 cat(paste0("Best solution found: Solution ",rounded_triq_analysis$best_tricluster_id,"\n\n"))
 cat(paste0("Best TRIQ value: ",rounded_triq_analysis$best_triq_value,"\n\n"))
 cat(paste0("TRIQ mean: ",rounded_triq_analysis$triq_mean,"\n\n"))
 cat(paste0("TRIQ stdev: ",rounded_triq_analysis$triq_stdev,"\n\n"))
 cat("\\vspace{1cm}")
 triq_table <- get_triq_table(rounded_triq_analysis$triq_solutions)
-
-# Print table
-knitr::kable(triq_table)
+kbl(triq_table, booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"),
+                full_width = F,
+                font_size = 14)
 ```
 
+\newpage
 \section{Graphical analysis}
-
-```{r, graphs,fig.width = 8, fig.height=9, fig.align='center'}
+```{r, graphs, fig.width = 8, fig.height=9, fig.align='center'}
 
 # Build pattern graphs
 patternGraphs <- buildExperimentPatternGraphs(experiment,

@@ -1,6 +1,7 @@
 # General variables and libraries ----
 require(properties)
 require(XML)
+require(modeest)
 TrLabPath <- "/Users/davgutavi/TrLab4.0"
 rsFolderPath <- paste0(TrLabPath,"/resources")
 rsFilePath <- paste0(TrLabPath,"/resources/resources.xml")
@@ -308,6 +309,64 @@ getExperimentCoordinates <- function(experiment){
     solution_index <- solution_index + 1
   }
   return(coordinates)
+}
+
+getDymensionLabels<-function(solution_dymension_points,list_of_tags){
+  labels <- c()
+  for (i in levels(factor(solution_dymension_points))) {
+    labels <-
+      append(labels, as.character(list_of_tags[as.numeric(i) + 1]))
+  }
+  return(labels)
+}
+
+
+getSolutionSummary <- function(solution_index, experiment) {
+  coordinates <- getSolutionCoordinates(solution_index, experiment)
+  instance_size <- length(coordinates$instances)
+  attribute_size <- length(coordinates$attributes)
+  layer_size <- length(layers <- coordinates$layers)
+  volume <- instance_size*attribute_size*layer_size
+  max_value <- max(coordinates$values)
+  min_value <- min(coordinates$values)
+  mean_value <- mean(coordinates$values)
+  median_value <- median(coordinates$values)
+  mode_value <- mfv(coordinates$values)
+  stdv_value <- sd(coordinates$values)
+  return(list(
+    volume = volume,
+    instance_size = instance_size,
+    attribute_size = attribute_size,
+    layer_size = layer_size,
+    max_value = max_value,
+    min_value = min_value,
+    mean_value = mean_value,
+    stdv_value = stdv_value,
+    median_value = median_value,
+    mode_value = mode_value
+  ))
+}
+
+getExperimentSummary <- function(experiment){
+  experiment_summary <- data.frame()
+  for (solution_index in c(1:length(experiment$solutions))){
+    solution_summary = getSolutionSummary(solution_index,experiment)
+    solution_summary_row <- data.frame(
+      Tricluster = paste0("#",solution_index),
+      Vol = solution_summary$volume,
+      I = solution_summary$instance_size,
+      A = solution_summary$attribute_size,
+      L = solution_summary$layer_size,
+      Max = solution_summary$max_value,
+      Min = solution_summary$min_value,
+      Mean = solution_summary$mean_value,
+      Stdv = solution_summary$stdv_value,
+      Median = solution_summary$median_value,
+      Mode = paste(solution_summary$mode_value, collapse = ",")
+    )
+    experiment_summary <- rbind(experiment_summary,solution_summary_row)
+  }
+  return(experiment_summary)
 }
 
 
