@@ -1,72 +1,56 @@
 source("system/load_environment.R")
-source("utils/experiment_management.R")
+source("utils/experiment_analysis.R")
 
-dataset <- load_dataset_by_name("france-monthly")
-
-solPath <- "/Users/davgutavi/triclustering_dev/dev_010/dev_010.sol"
-
-solPath <- "/Users/davgutavi/triclustering_france/it1_001/it1_001.sol"
-# solPath <- "/Users/davgutavi/triclustering_france/france/france.sol"
-# solPath <- "/Users/davgutavi/triclustering_france/exp001/exp001.sol"
-
-# experiment <- loadExperiment(input)
-experiment <- load_experiment_with_loaded_dataset(solPath,dataset)
-
-# plotPatterns(input)
-patternGraphs <- buildExperimentPatternGraphs(experiment,
-                                              value_tag = "consumption",
-                                              layer_tag = "year",
-                                              instance_tag = "time slot",
-                                              ial_title = "Monthly consumption series for each year",
-                                              ila_title = "Yearly consumption series for each month",
-                                              lia_title = "Annual consumption for each month")
-
-patternGraphs[[1]]$ial
+exp4 <-
+  loadExperimentFromPath("/Users/davgutavi/triclustering_france/iteration_2/it2_004/it2_004.sol")
+exp7 <-
+  loadExperimentFromPath("/Users/davgutavi/triclustering_france/iteration_2/it2_007/it2_007.sol")
 
 
+# INSTANCE COVERAGE
 
-aux1 <- paste0(unlist(strsplit(solPath, "/")))
-aux2 <- aux1[-length(aux1)]
-aux3 <-paste0(aux2,collapse="/")
-outPath <- paste0(aux3, "/graphs/")
-dir.create(outPath,showWarnings = FALSE)
+insGrExt4 <- buildDymensionOvelappingGraph(
+  "i",
+  exp4,
+  dymension_font_size = 7,
+  tricluster_font_size = 7,
+  yes_color = "red",
+  cell_lines = F,
+  frame_line_size = 0.5,
+  dymension_in_x_axis = T,
+  reduced_instance_ticks = T
+)
 
-i <- 1
-trellis.device(device="pdf", color=TRUE)
-for (sol_gr in patternGraphs){
-  out <- paste0(outPath,"graph_tri_",i,".pdf")
-  pdf(file = out, colormodel="rgb",paper = "a4",width=20, height=20)
-  print(sol_gr$ial)
-  print(sol_gr$ila)
-  print(sol_gr$lia)
-  dev.off() 
-  i <- i+1
-}
+ggsave(
+  "exp4.pdf",
+  insGrExt4,
+  "pdf",
+  "/Users/davgutavi/triclustering_france/iteration_2",
+  width = 17.5,
+  height = 5.5,
+  units = "cm"
+)
 
-for (sol_gr in patternGraphs){
-  print(sol_gr$ial)
-  print(sol_gr$ila)
-  print(sol_gr$lia)  
-  i <- i+1
-}
+insGrExt7 <- buildDymensionOvelappingGraph(
+  "i",
+  exp7,
+  dymension_font_size = 7,
+  tricluster_font_size = 7,
+  yes_color = "red",
+  cell_lines = F,
+  frame_line_size = 0.5,
+  dymension_in_x_axis = T,
+  reduced_instance_ticks = T
+)
 
-print(patternGraphs[[1]]$ial)
-
-
-i <- 1
-for (sol_gr in patternGraphs){
-  out <- paste0(outPath,"graph_tri_",i,".eps")
-  trellis.device(device="postscript", color=TRUE)
-  postscript(file = out, colormodel="rgb",onefile=FALSE, horizontal=FALSE,paper = "special",width=20, height=20)
-  print(sol_gr$ial,split=c(1,1,3,1),more = TRUE)
-  print(sol_gr$ila,split=c(2,1,3,1),more = TRUE)
-  print(sol_gr$lia,split=c(3,1,3,1),more = FALSE)
-  dev.off() 
-  i <- i+1
-}
-
-
-
-
+ggsave(
+  "exp7.pdf",
+  insGrExt7,
+  "pdf",
+  "/Users/davgutavi/triclustering_france/iteration_2",
+  width = 17.5,
+  height = 5.5,
+  units = "cm"
+)
 
 

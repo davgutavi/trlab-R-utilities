@@ -58,10 +58,13 @@ buildOverlappingGraph <- function(dymension_overlapping_data,
                                   dymension_font_size = 8,
                                   tricluster_label = "",
                                   tricluster_font_size = 8,
+                                  cell_lines = T,
                                   cell_line_size = 0.5,
+                                  cell_line_color = "black",
                                   yes_color = "black",
                                   no_color = "white",
                                   dymension_in_x_axis = F,
+                                  frame_line_size = 2,
                                   reduced_instance_ticks = NULL) {
   
   x_axis <- dymension_overlapping_data$Tricluster
@@ -80,8 +83,16 @@ buildOverlappingGraph <- function(dymension_overlapping_data,
     y_font_size <- tricluster_font_size
   }
   
-  gr <- ggplot(dymension_overlapping_data, aes(x_axis, y_axis)) +
-    geom_tile(aes(fill = Values), colour = "black", linewidth = cell_line_size) +
+  tiles = NULL
+  if (cell_lines==T){
+    tiles = geom_tile(colour = cell_line_color, linewidth = cell_line_size)
+  }
+  else{
+    tiles = geom_tile()
+  }
+  
+  gr <- ggplot(dymension_overlapping_data, aes(x_axis, y_axis, fill = Values)) +
+    tiles +
     scale_fill_manual(values = c("0" = no_color, "1" = yes_color)) +
     ggtitle(title) +
     xlab(x_lab) +
@@ -95,13 +106,13 @@ buildOverlappingGraph <- function(dymension_overlapping_data,
         hjust = 1
       ),
       legend.position = "none",
-      panel.border = element_rect(colour = "black", fill=NA, linewidth=2)
+      panel.border = element_rect(colour = "black", fill=NA, linewidth=frame_line_size)
     )
   
   if (!is.null(reduced_instance_ticks)) {
     if (dymension_in_x_axis == F) {
       gr <- gr + scale_y_discrete(breaks = reduced_instance_ticks,
-                                  labels = reducedInstanceTicks)
+                                  labels = reduced_instance_ticks)
     }
     else{
       gr <- gr + scale_x_discrete(breaks = reduced_instance_ticks,
@@ -120,13 +131,48 @@ buildOverlappingGraph <- function(dymension_overlapping_data,
 }
 
 
-# instanceExperimentCoordinates <- 
-#                           getExperimentDymensionCoordinates("i",experiment)
-# instanceOverlappingData <- 
-#                           getOverlappingGraphData(instanceExperimentCoordinates,
-#                                                   experiment$dataset_tags$instance_tags)
-# reducedInstanceTicks <- 
-#                           getReducedAxisTicks(instanceExperimentCoordinates,
-#                                               experiment$dataset_tags$instance_tags)
-# instanceGraph <- buildOverlappingGraph(instanceOverlappingData,
-#                                 "Instances",reduced_instance_ticks=reducedInstanceTicks)
+buildDymensionOvelappingGraph <- function(dymension, experiment, 
+                                          title = "",
+                                          dymension_label = "",
+                                          dymension_font_size = 8,
+                                          tricluster_label = "",
+                                          tricluster_font_size = 8,
+                                          cell_lines = T,
+                                          cell_line_size = 0.5,
+                                          cell_line_color = "black",
+                                          yes_color = "black",
+                                          no_color = "white",
+                                          dymension_in_x_axis = F,
+                                          frame_line_size = 2,
+                                          reduced_instance_ticks = F){
+  
+  dymensionExperimentCoordinates <- getExperimentDymensionCoordinates(dymension,experiment)
+  
+  dymensionDatasetTags <- getDymensionDatasetTags(experiment, dymension)
+  
+  dymensionOverlappingData <- getOverlappingGraphData(dymensionExperimentCoordinates,
+                                                      dymensionDatasetTags)
+  reducedDymensionTicks <- NULL
+  if (reduced_instance_ticks ==T){
+    reducedDymensionTicks<- getReducedAxisTicks(dymensionExperimentCoordinates,
+                                                dymensionDatasetTags)
+  }
+  
+  dymensionOverlappingGraph <- buildOverlappingGraph(dymensionOverlappingData,
+                                         title,
+                                         dymension_label,
+                                         dymension_font_size,
+                                         tricluster_label,
+                                         tricluster_font_size,
+                                         cell_lines,
+                                         cell_line_size,
+                                         cell_line_color,
+                                         yes_color,
+                                         no_color,
+                                         dymension_in_x_axis,
+                                         frame_line_size,
+                                         reduced_instance_ticks=reducedDymensionTicks)
+  
+  return(dymensionOverlappingGraph)
+}
+

@@ -301,6 +301,7 @@ getExperimentDymensionCoordinates <- function(dymension, experiment){
 }
 
 
+
 getExperimentCoordinates <- function(experiment){
   coordinates <- list()
   solution_index <- 1
@@ -318,6 +319,17 @@ getDymensionLabels<-function(solution_dymension_points,list_of_tags){
       append(labels, as.character(list_of_tags[as.numeric(i) + 1]))
   }
   return(labels)
+}
+
+getDymensionDatasetTags <- function(experiment, dymension){
+  dymension_label_list <- switch(  
+    dymension,  
+    "i"= experiment$dataset_tags$instance_tags,  
+    "a"= experiment$dataset_tags$attribute_tags,  
+    "l"= experiment$dataset_tags$layer_tags
+  )  
+  return (dymension_label_list)
+  
 }
 
 
