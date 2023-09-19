@@ -1,10 +1,22 @@
 source("system/load_environment.R")
 source("utils/experiment_analysis.R")
 source("utils/tricluster_plots.R")
+source("utils/triq_report.R")
 
 exp4 <- loadExperimentFromPath("/Users/davgutavi/triclustering_france/iteration_2/it2_004/it2_004.sol")
 exp7 <- loadExperimentFromPath("/Users/davgutavi/triclustering_france/iteration_2/it2_007/it2_007.sol")
 
+# LATEX TABLES ----
+library(xtable)
+exp4_rounded_triq <- round_triq_analysis(exp4$triq_analysis)
+exp4_triq_table <- get_triq_table(exp4_rounded_triq$triq_solutions)
+exp4_latex_table <- xtable(exp4_triq_table)
+print(exp4_latex_table)
+
+exp7_rounded_triq <- round_triq_analysis(exp7$triq_analysis)
+exp7_triq_table <- get_triq_table(exp7_rounded_triq$triq_solutions)
+exp7_latex_table <- xtable(exp7_triq_table)
+print(exp7_latex_table)
 
 # INSTANCE COVERAGE ----
 insGrExt4 <- buildDymensionOvelappingGraph("i",exp4,
