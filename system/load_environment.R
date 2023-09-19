@@ -326,7 +326,7 @@ getDymensionDatasetTags <- function(experiment, dymension){
     dymension,  
     "i"= experiment$dataset_tags$instance_tags,  
     "a"= experiment$dataset_tags$attribute_tags,  
-    "l"= experiment$dataset_tags$layer_tags
+    "l"= experiment$dataset_tags$slide_tags
   )  
   return (dymension_label_list)
   

@@ -1,6 +1,6 @@
 require(lattice)
 
-getLegend <- function(legend_tag_list){
+getLegend <- function(legend_tag_list, leyend_font_size=1){
   legend_tag_list_length <- length(legend_tag_list)
   cols <- 0
   if (legend_tag_list_length<=4){
@@ -10,7 +10,7 @@ getLegend <- function(legend_tag_list){
     cols <- ceiling(legend_tag_list_length/2)
   }
   return (list(text=legend_tag_list, space = "top",
-               columns=cols))
+               columns=cols, cex=leyend_font_size))
 }
 
 
@@ -59,14 +59,15 @@ buildSolutionPatternGraph <- function(solution,
                                       fsizeXaxis = 0.7,
                                       fsizeYaxis = 0.7,
                                       fsizeBoxes = 1.0,
-                                      lib = FALSE,
                                       color = TRUE,
+                                      tags_size = 10,
                                       value_tag = "values",
                                       layer_tag = "layers",
                                       instance_tag = "instances",
                                       ial_title = "Attributes for each Layer",
                                       ila_title = "Layers for each Attribute",
                                       lia_title = "Instances for each Attribute",
+                                      leyend_font_size = 10,
                                       visible_ticks = 5) {
   axis <- c(fsizeYaxis, fsizeXaxis)
   boxes <- list (cex = fsizeBoxes)
@@ -107,9 +108,9 @@ buildSolutionPatternGraph <- function(solution,
   ial_graph <- xyplot(
     val ~ f_inst | f_layer,
     solution,
-    main = ial_title,
-    xlab = instance_tag,
-    ylab = value_tag,
+    main = list(label=ial_title, fontsize=tags_size),
+    xlab = list(label=instance_tag, fontsize=tags_size),
+    ylab = list(label=value_tag, fontsize=tags_size),
     groups = attr,
     type = "a",
     font = "mono",
@@ -119,7 +120,7 @@ buildSolutionPatternGraph <- function(solution,
     ),
     layout = c(1, nlevels(f_layer)),
     strip = strip.custom(factor.levels = layers, par.strip.text = boxes),
-    auto.key =getLegend(attributes)
+    auto.key=getLegend(attributes,leyend_font_size)
   )
   
   # ILA
@@ -128,9 +129,9 @@ buildSolutionPatternGraph <- function(solution,
   ila_graph <- xyplot(
     val ~ f_inst | f_attr,
     solution,
-    main = ila_title,
-    xlab = instance_tag,
-    ylab = value_tag,
+    main = list(label=ila_title, fontsize=tags_size),
+    xlab = list(label=instance_tag, fontsize=tags_size),
+    ylab = list(label=value_tag, fontsize=tags_size),
     groups = layer,
     type = "a",
     font = "mono",
@@ -140,7 +141,7 @@ buildSolutionPatternGraph <- function(solution,
     ),
     layout = c(1, nlevels(f_attr)),
     strip = strip.custom(factor.levels = attributes, par.strip.text = boxes),
-    auto.key = getLegend(layers)
+    auto.key = getLegend(layers,leyend_font_size)
   )
   
   # LIA
@@ -149,9 +150,9 @@ buildSolutionPatternGraph <- function(solution,
   lia_graph <- xyplot(
     val ~ f_layer | f_attr,
     solution,
-    main = lia_title,
-    xlab = layer_tag,
-    ylab = value_tag,
+    main = list(label=lia_title, fontsize=tags_size),
+    xlab = list(label=layer_tag, fontsize=tags_size),
+    ylab = list(label=value_tag, fontsize=tags_size),
     groups = inst,
     type = "a",
     font = "mono",
@@ -175,14 +176,15 @@ buildExperimentPatternGraphs <- function(experiment,
                                          fsizeXaxis = 0.7,
                                          fsizeYaxis = 0.7,
                                          fsizeBoxes = 1.0,
-                                         lib = FALSE,
                                          color = TRUE,
+                                         tags_size = 10,
                                          value_tag = "values",
                                          layer_tag = "layers",
                                          instance_tag = "instances",
                                          ial_title = "Attributes for each Layer",
                                          ila_title = "Layers for each Attribute",
                                          lia_title = "Instances for each Attribute",
+                                         leyend_font_size = 1,
                                          visible_ticks = 5, 
                                          index_graphs = TRUE) {
   solutions <- experiment$solutions
@@ -209,14 +211,15 @@ buildExperimentPatternGraphs <- function(experiment,
       fsizeXaxis,
       fsizeYaxis,
       fsizeBoxes,
-      lib,
       color,
+      tags_size,
       value_tag,
       layer_tag,
       instance_tag,
       ial_title,
       ila_title,
       lia_title,
+      leyend_font_size,
       visible_ticks
     )
     i <- i+1
