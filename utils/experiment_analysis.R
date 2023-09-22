@@ -65,6 +65,7 @@ buildOverlappingGraph <- function(dymension_overlapping_data,
                                   no_color = "white",
                                   dymension_in_x_axis = F,
                                   frame_line_size = 2,
+                                  font_family = "Courier",
                                   reduced_instance_ticks = NULL) {
   
   x_axis <- dymension_overlapping_data$Tricluster
@@ -98,9 +99,10 @@ buildOverlappingGraph <- function(dymension_overlapping_data,
     xlab(x_lab) +
     ylab(y_lab) +
     theme(
-      axis.text.y = element_text(size = y_font_size),
+      axis.text.y = element_text(size = y_font_size, family = font_family),
       axis.text.x = element_text(
         size = x_font_size,
+        family = font_family,
         angle = 90,
         vjust = 0.5,
         hjust = 1
@@ -144,6 +146,7 @@ buildDymensionOvelappingGraph <- function(dymension, experiment,
                                           no_color = "white",
                                           dymension_in_x_axis = F,
                                           frame_line_size = 2,
+                                          font_family = "Courier",
                                           reduced_instance_ticks = F){
   
   dymensionExperimentCoordinates <- getExperimentDymensionCoordinates(dymension,experiment)
@@ -171,6 +174,7 @@ buildDymensionOvelappingGraph <- function(dymension, experiment,
                                          no_color,
                                          dymension_in_x_axis,
                                          frame_line_size,
+                                         font_family,
                                          reduced_instance_ticks=reducedDymensionTicks)
   
   return(dymensionOverlappingGraph)

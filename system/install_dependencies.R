@@ -26,3 +26,8 @@ install.packages("rgl")
 install.packages("reshape2")
 install.packages("modeest")
 install.packages("xtable")
+# *****
+install.packages("extrafont")
+library(extrafont)
+font_import()
+loadfonts()

@@ -29,7 +29,8 @@ insGrExt4 <- buildDymensionOvelappingGraph("i",exp4,
   reduced_instance_ticks = T
 )
 
-ggsave("exp4.pdf",insGrExt4,"pdf","/Users/davgutavi/triclustering_france/iteration_2",width = 17.5,height = 5.5,units = "cm")
+insGrExt4
+ggsave("exp4_inst.pdf",insGrExt4,"pdf","/Users/davgutavi/Desktop",width = 17.5,height = 5.5,units = "cm")
 
 insGrExt7 <- buildDymensionOvelappingGraph("i",exp7,
   dymension_font_size = 7,
@@ -41,7 +42,7 @@ insGrExt7 <- buildDymensionOvelappingGraph("i",exp7,
   reduced_instance_ticks = T
 )
 
-ggsave("exp7.pdf",insGrExt7,"pdf","/Users/davgutavi/triclustering_france/iteration_2",width = 17.5,height = 5.5,units = "cm")
+ggsave("exp7_inst.pdf",insGrExt7,"pdf","/Users/davgutavi/Desktop",width = 17.5,height = 5.5,units = "cm")
 
 # ATTRIBUTE COVERAGE ----
 attrGrExt4 <- buildDymensionOvelappingGraph("a",exp4,
@@ -103,7 +104,7 @@ exp4_patt <- buildSolutionPatternGraph(exp4$solutions[[4]],exp4$dataset_tags,
                                        leyend_font_size = 0.5,
                                        visible_ticks = 5)
 
-print(exp4_patt$ila)
+print(exp4_patt$ial)
 
 pdf("/Users/davgutavi/Desktop/exp4_patt_months.pdf",width=5,height=5)
 print(exp4_patt$ial)

@@ -1,6 +1,6 @@
 require(lattice)
 
-getLegend <- function(legend_tag_list, leyend_font_size=1){
+getLegend <- function(legend_tag_list, leyend_font_size=1, font_family="Courier"){
   legend_tag_list_length <- length(legend_tag_list)
   cols <- 0
   if (legend_tag_list_length<=4){
@@ -10,7 +10,7 @@ getLegend <- function(legend_tag_list, leyend_font_size=1){
     cols <- ceiling(legend_tag_list_length/2)
   }
   return (list(text=legend_tag_list, space = "top",
-               columns=cols, cex=leyend_font_size))
+               columns=cols, cex=leyend_font_size, fontfamily=font_family))
 }
 
 
@@ -60,6 +60,7 @@ buildSolutionPatternGraph <- function(solution,
                                       fsizeYaxis = 0.7,
                                       fsizeBoxes = 1.0,
                                       color = TRUE,
+                                      font_family = "Courier",
                                       tags_size = 10,
                                       value_tag = "values",
                                       layer_tag = "layers",
@@ -70,7 +71,7 @@ buildSolutionPatternGraph <- function(solution,
                                       leyend_font_size = 10,
                                       visible_ticks = 5) {
   axis <- c(fsizeYaxis, fsizeXaxis)
-  boxes <- list (cex = fsizeBoxes)
+  boxes <- list (cex = fsizeBoxes, fontfamily = font_family)
   
   inst  <- solution$g
   attr  <- solution$s
@@ -108,18 +109,20 @@ buildSolutionPatternGraph <- function(solution,
   ial_graph <- xyplot(
     val ~ f_inst | f_layer,
     solution,
-    main = list(label=ial_title, fontsize=tags_size),
-    xlab = list(label=instance_tag, fontsize=tags_size),
-    ylab = list(label=value_tag, fontsize=tags_size),
+    main = list(label=ial_title, fontsize=tags_size, fontfamily=font_family),
+    xlab = list(label=instance_tag, fontsize=tags_size, fontfamily=font_family),
+    ylab = list(label=value_tag, fontsize=tags_size, fontfamily=font_family),
     groups = attr,
     type = "a",
-    font = "mono",
+    font = font_family,
     scales = list(
       x = list(at = at_labels$at, labels = at_labels$labels, rot=90),
-      cex = axis
+      cex = axis,
+      fontfamily=font_family
     ),
     layout = c(1, nlevels(f_layer)),
-    strip = strip.custom(factor.levels = layers, par.strip.text = boxes),
+    strip = strip.custom(factor.levels = layers, 
+                         par.strip.text = boxes),
     auto.key=getLegend(attributes,leyend_font_size)
   )
   
@@ -129,12 +132,12 @@ buildSolutionPatternGraph <- function(solution,
   ila_graph <- xyplot(
     val ~ f_inst | f_attr,
     solution,
-    main = list(label=ila_title, fontsize=tags_size),
-    xlab = list(label=instance_tag, fontsize=tags_size),
-    ylab = list(label=value_tag, fontsize=tags_size),
+    main = list(label=ila_title, fontsize=tags_size, fontfamily=font_family),
+    xlab = list(label=instance_tag, fontsize=tags_size, fontfamily=font_family),
+    ylab = list(label=value_tag, fontsize=tags_size, fontfamily=font_family),
     groups = layer,
     type = "a",
-    font = "mono",
+    font = font_family,
     scales = list(
       x = list(at = at_labels$at, labels = at_labels$labels, rot=90),
       cex = axis
@@ -150,12 +153,12 @@ buildSolutionPatternGraph <- function(solution,
   lia_graph <- xyplot(
     val ~ f_layer | f_attr,
     solution,
-    main = list(label=lia_title, fontsize=tags_size),
-    xlab = list(label=layer_tag, fontsize=tags_size),
-    ylab = list(label=value_tag, fontsize=tags_size),
+    main = list(label=lia_title, fontsize=tags_size, fontfamily=font_family),
+    xlab = list(label=layer_tag, fontsize=tags_size, fontfamily=font_family),
+    ylab = list(label=value_tag, fontsize=tags_size, fontfamily=font_family),
     groups = inst,
     type = "a",
-    font = "mono",
+    font = font_family,
     layout = c(1, nlevels(f_attr)),
     scales = list(x = list(labels = layers), cex = axis),
     strip = strip.custom(factor.levels = attributes, par.strip.text = boxes)
@@ -177,6 +180,7 @@ buildExperimentPatternGraphs <- function(experiment,
                                          fsizeYaxis = 0.7,
                                          fsizeBoxes = 1.0,
                                          color = TRUE,
+                                         font_family = "Courier",
                                          tags_size = 10,
                                          value_tag = "values",
                                          layer_tag = "layers",
@@ -212,6 +216,7 @@ buildExperimentPatternGraphs <- function(experiment,
       fsizeYaxis,
       fsizeBoxes,
       color,
+      font_family,
       tags_size,
       value_tag,
       layer_tag,
