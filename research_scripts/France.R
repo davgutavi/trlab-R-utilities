@@ -102,9 +102,11 @@ exp4_patt <- buildSolutionPatternGraph(exp4$solutions[[4]],exp4$dataset_tags,
                                        ila_title = "",
                                        lia_title = "",
                                        leyend_font_size = 0.5,
-                                       visible_ticks = 5)
+                                       visible_ticks = 15)
 
 print(exp4_patt$ial)
+print(exp4_patt$ila)
+# print(exp4_patt$lia)
 
 pdf("/Users/davgutavi/Desktop/exp4_patt_months.pdf",width=5,height=5)
 print(exp4_patt$ial)
@@ -129,9 +131,12 @@ exp7_patt <- buildSolutionPatternGraph(exp7$solutions[[6]],exp7$dataset_tags,
                                        ila_title = "",
                                        lia_title = "",
                                        leyend_font_size = 0.5,
-                                       visible_ticks = 5)
+                                       visible_ticks = 15)
 
+
+print(exp7_patt$ial)
 print(exp7_patt$ila)
+# print(exp7_patt$lia)
 
 pdf("/Users/davgutavi/Desktop/exp7_patt_months.pdf",width=5,height=5)
 print(exp7_patt$ial)

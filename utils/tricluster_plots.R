@@ -140,7 +140,8 @@ buildSolutionPatternGraph <- function(solution,
     font = font_family,
     scales = list(
       x = list(at = at_labels$at, labels = at_labels$labels, rot=90),
-      cex = axis
+      cex = axis,
+      fontfamily=font_family
     ),
     layout = c(1, nlevels(f_attr)),
     strip = strip.custom(factor.levels = attributes, par.strip.text = boxes),
@@ -160,7 +161,8 @@ buildSolutionPatternGraph <- function(solution,
     type = "a",
     font = font_family,
     layout = c(1, nlevels(f_attr)),
-    scales = list(x = list(labels = layers), cex = axis),
+    scales = list(x = list(labels = layers), cex = axis,
+                  fontfamily=font_family),
     strip = strip.custom(factor.levels = attributes, par.strip.text = boxes)
   )
   
