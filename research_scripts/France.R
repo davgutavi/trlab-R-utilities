@@ -26,7 +26,10 @@ insGrExt4 <- buildDymensionOvelappingGraph("i",exp4,
   cell_lines = F,
   frame_line_size = 0.5,
   dymension_in_x_axis = T,
-  reduced_instance_ticks = T
+  reduced_instance_ticks = T,
+  trim_instace_ticks = T,
+  left_limit = 1,
+  right_limit = 1
 )
 
 insGrExt4
@@ -39,9 +42,12 @@ insGrExt7 <- buildDymensionOvelappingGraph("i",exp7,
   cell_lines = F,
   frame_line_size = 0.5,
   dymension_in_x_axis = T,
-  reduced_instance_ticks = T
+  reduced_instance_ticks = T,
+  trim_instace_ticks = T,
+  left_limit = 2,
+  right_limit = 2
 )
-
+insGrExt7
 ggsave("exp7_inst.pdf",insGrExt7,"pdf","/Users/davgutavi/Desktop",width = 17.5,height = 5.5,units = "cm")
 
 # ATTRIBUTE COVERAGE ----

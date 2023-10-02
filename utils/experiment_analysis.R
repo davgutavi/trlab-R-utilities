@@ -40,16 +40,61 @@ getReducedAxisTicks <-
     while (solution_index <= length(experiment_dymension_coordinates)) {
       dymension_index_list <-
         experiment_dymension_coordinates[[solution_index]]
-      reduced_axis_labels <-
-        c(reduced_axis_labels, dymension_tag_list[[dymension_index_list[[1]]+1]])
-      reduced_axis_labels <-
-        c(reduced_axis_labels, dymension_tag_list[[dymension_index_list[[length(dymension_index_list)]]]])
+      
+      left_label <- dymension_tag_list[[dymension_index_list[[1]]+1]]
+      right_label <- dymension_tag_list[[dymension_index_list[[length(dymension_index_list)]]]]
+      
+      if (!left_label %in% reduced_axis_labels){
+        reduced_axis_labels <- c(reduced_axis_labels, left_label)
+      }
+      if (!right_label %in% reduced_axis_labels){
+        reduced_axis_labels <- c(reduced_axis_labels, right_label)
+      }
       solution_index <- solution_index + 1
     }
     reduced_axis_labels <-
       c(reduced_axis_labels, dymension_tag_list[[length(dymension_tag_list)]])
     return(reduced_axis_labels)
   }
+
+trimReducedAxisTicks <- function(reduced_axis_ticks, dimension_tags, left_limit = 1,
+                                 right_limit = 1){
+  res <- c()
+  index <- 1
+  ordered_axis_ticks <- sortAxisTicks(reduced_axis_ticks, dimension_tags)
+  print(ordered_axis_ticks)
+  while (index<=length(ordered_axis_ticks)){
+    if (index > left_limit && index < (length(ordered_axis_ticks)-right_limit+1)){
+      res <- c(res, ordered_axis_ticks[index])
+    }
+    index <- index +1
+  }
+  print(res)
+  return (res)
+}
+
+
+
+sortAxisTicks <- function(axis_ticks, dimension_tags) {
+  swap_performed <- T
+  while (swap_performed) {
+    swap_performed <- F
+    for (i in 1:(length(axis_ticks) - 1)) {
+      left <- match(axis_ticks[i],dimension_tags)
+      right <- match(axis_ticks[i+1],dimension_tags)
+      if (left > right) {
+        tmp <- axis_ticks[i]
+        axis_ticks[i] <- axis_ticks[i + 1]
+        axis_ticks[i + 1] <- tmp
+        swap_performed <- T
+      }
+    }
+  }
+  return(axis_ticks)
+}
+
+  
+  
 
 
 buildOverlappingGraph <- function(dymension_overlapping_data,
@@ -147,7 +192,10 @@ buildDymensionOvelappingGraph <- function(dymension, experiment,
                                           dymension_in_x_axis = F,
                                           frame_line_size = 2,
                                           font_family = "Courier",
-                                          reduced_instance_ticks = F){
+                                          reduced_instance_ticks = F,
+                                          trim_instace_ticks = F,
+                                          left_limit = 1,
+                                          right_limit = 1){
   
   dymensionExperimentCoordinates <- getExperimentDymensionCoordinates(dymension,experiment)
   
@@ -157,8 +205,15 @@ buildDymensionOvelappingGraph <- function(dymension, experiment,
                                                       dymensionDatasetTags)
   reducedDymensionTicks <- NULL
   if (reduced_instance_ticks ==T){
-    reducedDymensionTicks<- getReducedAxisTicks(dymensionExperimentCoordinates,
+    reducedDymensionTicks <- getReducedAxisTicks(dymensionExperimentCoordinates,
                                                 dymensionDatasetTags)
+    
+    if (trim_instace_ticks == T){
+      reducedDymensionTicks <-  
+        trimReducedAxisTicks(reducedDymensionTicks,dymensionDatasetTags,left_limit,right_limit)
+    }
+   
+    
   }
   
   dymensionOverlappingGraph <- buildOverlappingGraph(dymensionOverlappingData,
