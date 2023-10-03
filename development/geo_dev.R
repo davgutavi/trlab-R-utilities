@@ -3,24 +3,68 @@ library("biomaRt")
 library("BiocManager")
 library("hgu219.db")
 
-
-BiocManager("hgu219.db")
-
-
 gse112660 <- getGEO("GSE112660")
 gse112660_data <- exprs(gse112660[[1]])
-probes <- rownames(gse112660_data)
+gse112660_aff_probes <- rownames(gse112660_data)
+
+hgu219_ids <- as.data.frame(hgu219ENTREZID)
+hgu219_alias <- as.data.frame(hgu219ALIAS2PROBE)
+
+gse112660_names <- subset(hgu219_alias, probe_id %in% gse112660_aff_probes)
+probes <- gse112660_aff_probes
+
+gse112660_names[[1,"alias_symbol"]]
 
 
-gse112660_data["11715100_at",1]
+gse112660_names <- subset(hgu219_alias, probe_id %in% gse112660_aff_probes)
 
-ids <- as.data.frame(hgu219ENTREZID)
-alias <- as.data.frame(hgu219ALIAS2PROBE)
+probes <- gse112660_aff_probes
+gene_list <- gse112660_names
 
-names <- subset(alias, probe_id %in% probes)
+annnotated <- data.frame(Aff=character(0),Gene=character(0))
+not_annnotated <- c()
+multiple <- data.frame(Aff=character(0),Gene=character(0))
+for (aff in probes){
+  sym_list <- subset(gene_list, probe_id %in% aff)
+  # Annotated  
+  if(nrow(sym_list)==1){
+    annnotated[nrow(annnotated) + 1,] = c(aff, sym_list[[1,"alias_symbol"]]) 
+  }
+  # Not annotated  
+  else if(nrow(sym_list)==0){
+    not_annnotated <- c(not_annnotated,aff)
+    
+  }
+  # Multiple annotated  
+  else{
+    multiple <- rbind(multiple,data.frame(Aff=aff,Gene=sym_list$alias_symbol))
+  }
+}
 
-nrow(names)
-length(probes)
+multiple[multiple$Aff=="11726638_at",]
+
+library(tidyverse)
+annnotated[annnotated$Gene=="C7",]
+
+x <- c(1, 1, 4, 5, 4, 6)
+duplicated(x)
+x[duplicated(x)]
+
+multiple$Aff[duplicated(multiple$Aff)]
+
+df[df$Gene=="H3/h", ]
+
+subset(hgu219_alias, probe_id %in% c("11715100_at", "11715102_x_at"))
+
+
+
+length(gse112660_names[gse112660_names$probe_id=="11715105_at",]$alias_symbol)
+
+
+
+length(gse112660_names$probe_id)
+length(unique(gse112660_names$probe_id))
+
 
 
 
