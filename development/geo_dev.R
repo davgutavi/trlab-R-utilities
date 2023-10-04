@@ -7,16 +7,10 @@ gse112660 <- getGEO("GSE112660")
 gse112660_data <- exprs(gse112660[[1]])
 gse112660_aff_probes <- rownames(gse112660_data)
 
-hgu219_ids <- as.data.frame(hgu219ENTREZID)
+# hgu219_ids <- as.data.frame(hgu219ENTREZID)
 hgu219_alias <- as.data.frame(hgu219ALIAS2PROBE)
-
 gse112660_names <- subset(hgu219_alias, probe_id %in% gse112660_aff_probes)
-probes <- gse112660_aff_probes
 
-gse112660_names[[1,"alias_symbol"]]
-
-
-gse112660_names <- subset(hgu219_alias, probe_id %in% gse112660_aff_probes)
 
 probes <- gse112660_aff_probes
 gene_list <- gse112660_names
@@ -41,16 +35,74 @@ for (aff in probes){
   }
 }
 
+multiple_df <- multiple
+annotated_df <- annnotated
+result <- data.frame(Aff=character(0),Gene=character(0))
+aff_list <- unique(multiple_df$Aff)
+ann_genes <- unique(annnotated$Gene)
+dismissed <- c()
+for (aff in aff_list){
+  aff_gene_candidates <- multiple_df[multiple_df$Aff==aff,]$Gene
+  available_genes <- aff_gene_candidates[!aff_gene_candidates 
+                                         %in% intersect(aff_gene_candidates,ann_genes)]
+  if (length(available_genes)!=0){
+    selected_gene <- sample(available_genes,1)
+    ann_genes <- c(ann_genes, selected_gene)
+    result[nrow(result) + 1,] = c(aff, selected_gene) 
+  }
+  else{
+    dismissed <- c(dismissed,aff)
+  }
+}
+
+bio_dataset <- rbind(annnotated,result)
+
+a<-length(not_annnotated)
+b<-length(dismissed)
+c<-nrow(gse112660_names)
+p<- (a+b)/c
+p*100
+
+
+
+p
+aff <- "11715100_at"
+aff_gene_candidates <- multiple_df[multiple_df$Aff==aff,]$Gene
+available_genes <- aff_gene_candidates[!aff_gene_candidates 
+                                       %in% intersect(aff_gene_candidates,ann_genes)]
+selected_gene <- sample(available_genes,1)
+ann_genes <- c(ann_genes, selected_gene)
+result[nrow(result) + 1,] = c(aff, selected_gene) 
+
+aff <- "11715101_s_at"
+aff_gene_candidates <- multiple_df[multiple_df$Aff==aff,]$Gene
+available_genes <- aff_gene_candidates[!aff_gene_candidates 
+                                       %in% intersect(aff_gene_candidates,ann_genes)]
+selected_gene <- sample(available_genes,1)
+ann_genes <- c(ann_genes, selected_gene)
+result[nrow(result) + 1,] = c(aff, selected_gene) 
+
+
+
+
+gse112660_names[[1,"alias_symbol"]]
+
+
+
+
+annnotated
+
+
 multiple[multiple$Aff=="11726638_at",]
 
 library(tidyverse)
-annnotated[annnotated$Gene=="C7",]
+annnotated[annnotated$Gene=="C15orf40",]
 
 x <- c(1, 1, 4, 5, 4, 6)
 duplicated(x)
 x[duplicated(x)]
 
-multiple$Aff[duplicated(multiple$Aff)]
+annnotated$Gene[duplicated(annnotated$Gene)]
 
 df[df$Gene=="H3/h", ]
 
