@@ -1,8 +1,10 @@
-# From Bioconductor
+a# From Bioconductor
 if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("GEOquery")
 BiocManager::install("affy")
+BiocManager::install("biomaRt")
+BiocManager::install("hgu219.db")
 install.packages("rmarkdown")
 install.packages("shinythemes")
 install.packages("shinyFiles")
