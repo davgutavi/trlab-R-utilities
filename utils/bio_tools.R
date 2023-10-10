@@ -47,7 +47,7 @@ process_multiple <- function(multiple_df, annotated_df){
 }
 
 
-build_gene_data <- function(annotation_list, gene_expression_values){
+build_gene_data <- function(annotation_list, gene_expression_values, strategy="d"){
   
   gene_list <- unique(annotation_list$Gene)
   res <- data.frame(matrix(NA, nrow = 0, ncol = ncol(gene_expression_values)))
@@ -55,9 +55,16 @@ build_gene_data <- function(annotation_list, gene_expression_values){
     aff_list <- annotation_list[annotation_list$Gene==gene,]
     if (nrow(aff_list)==1){
       res <-  rbind(res,gene_expression_values[aff_list[1,1],])
+      rownames(res)[nrow(res)] <- gene
     }
     else{
       # If a gene symbol has more than one affymetrix
+      if (strategy=="a"){
+        # Average
+        res <-  rbind(res, colMeans(gene_expression_values[aff_list$Aff,]))
+        rownames(res)[nrow(res)] <- gene
+      }
+      # else (strategy=="d") => dismiss
     }
   }
   colnames(res)<-colnames(gene_expression_values)
