@@ -1,28 +1,24 @@
 get_annotated_lists <- function(probes,gene_list){
-  annnotated <- data.frame(Aff=character(0),Gene=character(0))
-  not_annnotated <- c()
+  annotated <- data.frame(Aff=character(0),Gene=character(0))
+  not_annotated <- c()
   multiple <- data.frame(Aff=character(0),Gene=character(0))
   for (aff in probes){
     sym_list <- subset(gene_list, probe_id %in% aff)
     # Annotated  
     if(nrow(sym_list)==1){
-      annnotated[nrow(annnotated) + 1,] = c(aff, sym_list[[1,"alias_symbol"]]) 
+      annotated[nrow(annotated) + 1,] = c(aff, sym_list[[1,"alias_symbol"]]) 
     }
     # Not annotated  
     else if(nrow(sym_list)==0){
-      not_annnotated <- c(not_annnotated,aff)
-      
+      not_annotated <- c(not_annotated,aff)
     }
     # Multiple annotated  
     else{
       multiple <- rbind(multiple,data.frame(Aff=aff,Gene=sym_list$alias_symbol))
     }
   }    
-  
-  return(list(annotated=annnotated,notannotated=not_annnotated,multiple=multiple))
-  
+  return(list(annotated=annotated,notannotated=not_annotated,multiple=multiple))
 }
-
 
 process_multiple <- function(multiple_df, annotated_df){
   result <- data.frame(Aff=character(0),Gene=character(0))

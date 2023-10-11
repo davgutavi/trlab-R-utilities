@@ -35,3 +35,6 @@ BiocManager::install("affy")
 BiocManager::install("biomaRt")
 BiocManager::install("hgu219.db")
 BiocManager::install("rae230a.db")
+
+# Optional packages 
+install.packages("tictoc")
