@@ -4,12 +4,93 @@ source("utils/tricluster_plots.R")
 source("utils/triq_report.R")
 
 
+solPath <- "/Users/davgutavi/triclustering_rat/preliminar/ex1/ex1.sol"
+
+experiment <- loadExperimentFromPath(solPath)
+summary_table <- getExperimentSummary(experiment)
+
+#NO lee correctamente el fichero
+in_tags <- as.vector(read.table("/Users/davgutavi/TrLab4.0/resources/0022/gse8988d_genes.txt", sep = "\n",comment.char = "")$V1)
+
+aux<- read.delim("/Users/davgutavi/TrLab4.0/resources/0022/gse8988d_genes.txt", header = F,sep = "\n")
+
+
+in_tags <- as.vector(read.table("/Users/davgutavi/TrLab4.0/resources/0022/gse8988d_genes.txt", sep = "\n",comment.char = "")$V1)
+
+instanceExperimentCoordinates <- getExperimentDymensionCoordinates("i",experiment)
+instanceExperimentCoordinates[[1]]
+instanceExperimentCoordinates[[2]]
+
+getReducedAxisTicks(instanceExperimentCoordinates,experiment$dataset_tags$instance_tags)
+experiment_dymension_coordinates <- instanceExperimentCoordinates
+dymension_tag_list <- experiment$dataset_tags$instance_tags
+
+reduced_axis_labels <- c(dymension_tag_list[[1]])
+solution_index <- 1
+while (solution_index <= length(experiment_dymension_coordinates)) {
+  dymension_index_list <-
+    experiment_dymension_coordinates[[solution_index]]
+  
+  left_label <- dymension_tag_list[[dymension_index_list[[1]]+1]]
+  right_label <- dymension_tag_list[[dymension_index_list[[length(dymension_index_list)]]]]
+  
+  if (!left_label %in% reduced_axis_labels){
+    reduced_axis_labels <- c(reduced_axis_labels, left_label)
+  }
+  if (!right_label %in% reduced_axis_labels){
+    reduced_axis_labels <- c(reduced_axis_labels, right_label)
+  }
+  solution_index <- solution_index + 1
+}
+reduced_axis_labels <-
+  c(reduced_axis_labels, dymension_tag_list[[length(dymension_tag_list)]])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 gse8988_dataset <- loadDatasetByTrLabName("gse8988d")
 
+
 solution_path <- "/Users/davgutavi/triclustering_rat/preliminar/ex1/ex1.sol"
+dataset_type <- gse8988_dataset$dataset_info$.attrs[14]
+
+
 props <- read.properties(solution_path)
-solutions <- getTriclusters(props,loaded_dataset$dataset_values)
-triqAnalysis <- load_triq_analysis(solution_path, loaded_dataset$dataset_info$.attrs[14])
+solutions <- getTriclusters(props,gse8988_dataset$dataset_values)
+triqAnalysis <- load_triq_analysis(solution_path, gse8988_dataset$dataset_info$.attrs[14])
+
+
+
+
+
+triq_csv <- load_triq_csv(solution_path, dataset_type)
+
+filepath<-"/Users/davgutavi/triclustering_rat/preliminar/ex1/ex1_triq.csv"
+
+filepath<-"/Users/davgutavi/triclustering_france/iteration_1/it1_001/it1_001_triq.csv"
+selectet_colums <- c(1:10)
+triq_csv_a <- read.csv(filepath, sep = ";", header = T)[selectet_colums]
+triq_csv_a <- read.csv(filepath, sep = ";" , header = T, row.names = 1)[selectet_colums]
+triq_csv_b <- read.csv(filepath, sep = ";" , header = F,row.names = NULL)[selectet_colums]
+triq_csv[is.na(triq_csv)] <- ""
+
+
+
 
 
 

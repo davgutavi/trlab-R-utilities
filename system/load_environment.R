@@ -158,9 +158,9 @@ getGraphicalTags <- function(datasetInfo) {
   layerPath <- paste0(rootPath, "/", datasetInfo$times)
   
   # Getting the tags from files
-  in_tags <- as.vector(read.table(intancePath, sep = "\n")$V1)
-  at_tags <- as.vector(read.table(attributePath, sep = "\n")$V1)
-  sl_tags <- as.vector(read.table(layerPath, sep = "\n")$V1)
+  in_tags <- as.vector(read.delim(intancePath, sep = "\n",header = F,comment.char = "")$V1)
+  at_tags <- as.vector(read.delim(attributePath, sep = "\n",header = F,comment.char = "")$V1)
+  sl_tags <- as.vector(read.delim(layerPath, sep = "\n",header = F,comment.char = "")$V1)
   
   return(list(
     instance_tags = in_tags,
@@ -183,7 +183,7 @@ load_triq_csv <- function(solution_path, dataset_type) {
     selectet_colums <- c(1:6)
   }
   triq_csv <-
-    read.csv(filepath, sep = ";" , header = TRUE)[selectet_colums]
+    read.csv(filepath, sep = ";" , header = F)[selectet_colums]
   triq_csv[is.na(triq_csv)] <- ""
   
   return(triq_csv)
@@ -192,7 +192,7 @@ load_triq_csv <- function(solution_path, dataset_type) {
 
 load_triq_solution_table <- function(triq_csv, dataset_type) {
   triq_sol <- list()
-  for (i in c(4:nrow(triq_csv))) {
+  for (i in c(5:nrow(triq_csv))) {
     id <- strsplit(strsplit(triq_csv[i, 1], "\\{")[[1]], "\\}")[[2]]
     triq <- as.numeric(triq_csv[i, 2])
     if (dataset_type == 'b') {
@@ -233,10 +233,10 @@ load_triq_analysis <- function(solution_path, dataset_type) {
   triq_csv <- load_triq_csv(solution_path, dataset_type)
   
   best_tricluster_id <-
-    as.numeric(strsplit(strsplit(triq_csv[1, 3], "\\{")[[1]], "\\}")[[2]])
-  best_triq_value <- as.numeric(triq_csv[1, 4])
-  triq_mean <-  as.numeric(triq_csv[1, 5])
-  triq_stdev <-  as.numeric(triq_csv[1, 6])
+    as.numeric(strsplit(strsplit(triq_csv[2, 3], "\\{")[[1]], "\\}")[[2]])
+  best_triq_value <- as.numeric(triq_csv[2, 4])
+  triq_mean <-  as.numeric(triq_csv[2, 5])
+  triq_stdev <-  as.numeric(triq_csv[2, 6])
   
   triq_analysis <-
     list(
@@ -248,10 +248,10 @@ load_triq_analysis <- function(solution_path, dataset_type) {
   
   if (dataset_type == 'b') {
     best_tricluster_id_n <-
-      as.numeric(strsplit(strsplit(triq_csv[1, 7], "\\{")[[1]], "\\}")[[2]])
-    best_triq_value_n <- as.numeric(triq_csv[1, 8])
-    triq_mean_n <-  as.numeric(triq_csv[1, 9])
-    triq_stdev_n <-  as.numeric(triq_csv[1, 10])
+      as.numeric(strsplit(strsplit(triq_csv[2, 7], "\\{")[[1]], "\\}")[[2]])
+    best_triq_value_n <- as.numeric(triq_csv[2, 8])
+    triq_mean_n <-  as.numeric(triq_csv[2, 9])
+    triq_stdev_n <-  as.numeric(triq_csv[2, 10])
     triq_analysis[["best_tricluster_id_n"]] = best_tricluster_id_n
     triq_analysis[["best_triq_value_n"]] = best_triq_value_n
     triq_analysis[["triq_mean_n"]] = triq_mean_n
@@ -364,7 +364,8 @@ getExperimentSummary <- function(experiment){
   for (solution_index in c(1:length(experiment$solutions))){
     solution_summary = getSolutionSummary(solution_index,experiment)
     solution_summary_row <- data.frame(
-      Tricluster = paste0("#",solution_index),
+      # Tricluster = paste0("#",solution_index),
+      Tricluster = solution_index,
       Vol = solution_summary$volume,
       I = solution_summary$instance_size,
       A = solution_summary$attribute_size,
